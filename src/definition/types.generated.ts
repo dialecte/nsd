@@ -81,6 +81,8 @@ export type AttributesConstructedAttribute = {
 	informative?: string
 	name: string
 	titleID: string
+	typeKindParameterized?: string
+	'xsi:type'?: 'tServiceConstructedAttribute' | (string & {})
 }
 
 export type AttributesConstructedAttributes = {}
@@ -405,6 +407,8 @@ export type AttributesServiceTypeRealization = {
 	informative?: string
 	name: string
 	titleID: string
+	typeKindParameterized?: string
+	'xsi:type'?: 'tServiceConstructedAttribute' | (string & {})
 }
 
 export type AttributesServiceTypeRealizations = {}

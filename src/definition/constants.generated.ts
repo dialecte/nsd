@@ -416,6 +416,8 @@ export const ATTRIBUTES = {
 		informative: '' as string,
 		name: '' as string,
 		titleID: '' as string,
+		typeKindParameterized: '' as string,
+		'xsi:type': '' as string,
 	} as AttributesOf<'ConstructedAttribute'>,
 	ConstructedAttributes: {} as AttributesOf<'ConstructedAttributes'>,
 	Copyright: {} as AttributesOf<'Copyright'>,
@@ -600,6 +602,8 @@ export const ATTRIBUTES = {
 		informative: '' as string,
 		name: '' as string,
 		titleID: '' as string,
+		typeKindParameterized: '' as string,
+		'xsi:type': '' as string,
 	} as AttributesOf<'ServiceTypeRealization'>,
 	ServiceTypeRealizations: {} as AttributesOf<'ServiceTypeRealizations'>,
 	SubDataAttribute: {

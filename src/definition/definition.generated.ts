@@ -332,7 +332,15 @@ export const DEFINITION = {
 		documentation: 'Definition of a constructed (structured) data attribute.',
 		parents: ['ConstructedAttributes'],
 		attributes: {
-			sequence: ['deprecated', 'descID', 'informative', 'name', 'titleID'],
+			sequence: [
+				'deprecated',
+				'descID',
+				'informative',
+				'name',
+				'titleID',
+				'typeKindParameterized',
+				'xsi:type',
+			],
 			details: {
 				deprecated: { default: 'false', facets: { whiteSpace: 'collapse' } },
 				descID: { facets: { minLength: 1, whiteSpace: 'replace' } },
@@ -346,6 +354,11 @@ export const DEFINITION = {
 					},
 				},
 				titleID: { required: true, facets: { minLength: 1, whiteSpace: 'replace' } },
+				typeKindParameterized: { default: 'false', facets: { whiteSpace: 'collapse' } },
+				'xsi:type': {
+					namespace: { prefix: 'xsi', uri: 'http://www.w3.org/2001/XMLSchema-instance' },
+					facets: { enumeration: ['tServiceConstructedAttribute'] },
+				},
 			},
 			identityFields: ['name'],
 		},
@@ -1741,7 +1754,15 @@ export const DEFINITION = {
 			'Realization of an abstract type as constructed attribute in the service namespace.',
 		parents: ['ServiceTypeRealizations'],
 		attributes: {
-			sequence: ['deprecated', 'descID', 'informative', 'name', 'titleID'],
+			sequence: [
+				'deprecated',
+				'descID',
+				'informative',
+				'name',
+				'titleID',
+				'typeKindParameterized',
+				'xsi:type',
+			],
 			details: {
 				deprecated: { default: 'false', facets: { whiteSpace: 'collapse' } },
 				descID: { facets: { minLength: 1, whiteSpace: 'replace' } },
@@ -1755,6 +1776,11 @@ export const DEFINITION = {
 					},
 				},
 				titleID: { required: true, facets: { minLength: 1, whiteSpace: 'replace' } },
+				typeKindParameterized: { default: 'false', facets: { whiteSpace: 'collapse' } },
+				'xsi:type': {
+					namespace: { prefix: 'xsi', uri: 'http://www.w3.org/2001/XMLSchema-instance' },
+					facets: { enumeration: ['tServiceConstructedAttribute'] },
+				},
 			},
 		},
 		children: {
