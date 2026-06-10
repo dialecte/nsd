@@ -10,6 +10,8 @@ import {
 	SINGLETON_ELEMENTS,
 } from '../definition'
 
+import { XSI_NAMESPACE } from '@dialecte/core/helpers'
+
 import type { IOConfig, AnyDialecteConfig, DatabaseConfig } from '@dialecte/core'
 
 // NSD-specific IO configuration
@@ -29,6 +31,7 @@ export const NSD_DATABASE_CONFIG = {
 
 export const NSD_NAMESPACES = {
 	default: { uri: 'http://www.iec.ch/61850/2016/NSD', prefix: '' },
+	xsi: XSI_NAMESPACE,
 } as const
 
 const SHARED_CONFIG = {
