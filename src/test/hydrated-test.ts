@@ -18,7 +18,7 @@ import type { Config } from '@/config/dialecte.config'
 
 type NsdModules = typeof NSD_EXTENSION_MODULES
 
-export const XMLNS_NSD_NAMESPACE = `xmlns=${NSD_DIALECTE_CONFIG.namespaces.default.uri}`
+export const XMLNS_NSD_NAMESPACE = `xmlns="${NSD_DIALECTE_CONFIG.namespaces.default.uri}"`
 export const ALL_XMLNS_NAMESPACES = `${XMLNS_NSD_NAMESPACE} ${XMLNS_DEV_NAMESPACE} ${XMLNS_XSI_NAMESPACE}`
 export { CUSTOM_RECORD_ID_ATTRIBUTE, CUSTOM_RECORD_ID_ATTRIBUTE_NAME }
 
