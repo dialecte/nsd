@@ -1,6 +1,6 @@
 import { NSD_EXTENSION_MODULES } from '../extensions'
 
-import type { Config } from '@/config/dialecte.config'
+import type { Config } from '@/v2017A/config/dialecte.config'
 import type * as CoreTest from '@dialecte/core/test'
 
 export namespace NsdTest {

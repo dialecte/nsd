@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.0] - 2026-06-26
+
+### Changed
+
+- **BREAKING:** versioned layout — source moved to `src/v2017A/`; the package now exports `./v2017A` (and `./v2017A/test`) only. Consumers must import `@dialecte/nsd/v2017A`.
+- Build externalizes `@dialecte/core` + `dexie` (no longer bundled).
+
+### Added
+
+- Type-performance CI gates (`type-bench:check` + `type-narrowing`) via `@dialecte/cli`, with benchmarks under `benchmarks/types/v2017A/`.
+
 ## [0.0.5] - 2026-06-11
 
 ### Fixed

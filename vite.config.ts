@@ -24,11 +24,14 @@ export default defineConfig({
 		sourcemap: import.meta.env?.DEV,
 		lib: {
 			entry: {
-				index: fileURLToPath(new URL('./src/index.ts', import.meta.url)),
-				test: fileURLToPath(new URL('./src/test/index.ts', import.meta.url)),
+				'v2017A/index': fileURLToPath(new URL('./src/v2017A/index.ts', import.meta.url)),
+				'v2017A/test': fileURLToPath(new URL('./src/v2017A/test/index.ts', import.meta.url)),
 			},
 			name: 'NsdDialecte',
 			formats: ['es'],
+		},
+		rollupOptions: {
+			external: [/^@dialecte\/core/, 'dexie'],
 		},
 	},
 })

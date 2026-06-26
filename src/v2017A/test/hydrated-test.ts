@@ -11,10 +11,10 @@ import {
 	XMLNS_DEV_NAMESPACE,
 } from '@dialecte/core/test'
 
-import { NSD_DIALECTE_CONFIG } from '@/config'
-import { NSD_EXTENSION_MODULES } from '@/extensions'
+import { NSD_DIALECTE_CONFIG } from '@/v2017A/config'
+import { NSD_EXTENSION_MODULES } from '@/v2017A/extensions'
 
-import type { Config } from '@/config/dialecte.config'
+import type { Config } from '@/v2017A/config/dialecte.config'
 
 type NsdModules = typeof NSD_EXTENSION_MODULES
 

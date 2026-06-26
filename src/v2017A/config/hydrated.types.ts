@@ -1,5 +1,5 @@
 import type { Config } from './dialecte.config'
-import type { NSD_EXTENSION_MODULES } from '@/extensions'
+import type { NSD_EXTENSION_MODULES } from '@/v2017A/extensions'
 import type * as Core from '@dialecte/core'
 
 type NsdExtensions = Core.MergedExtensions<typeof NSD_EXTENSION_MODULES>
