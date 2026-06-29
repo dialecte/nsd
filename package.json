@@ -1,6 +1,6 @@
 {
 	"name": "@dialecte/nsd",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "Dialecte - NSD (Network Substation Description) sdk",
 	"license": "MIT",
 	"repository": {
@@ -33,23 +33,24 @@
 		"//====== TEST ======//": "",
 		"test": "vitest",
 		"//====== CHECK ======//": "",
-		"check": "run-p type-check lint:check format:check",
+		"check": "run-p type-check type-check:test lint:check format:check",
 		"type-check": "tsc --noEmit",
+		"type-check:test": "tsc -p tsconfig.vitest.json --noEmit",
+		"lint:check": "oxlint",
+		"lint:fix": "oxlint . --fix -D correctness --ignore-path .gitignore",
+		"format:check": "oxfmt --check",
+		"format:fix": "oxfmt",
 		"//====== TYPE PERF ======//": "",
 		"coverage:gen": "dialecte coverage",
 		"type-bench": "npm run coverage:gen && dialecte bench",
 		"type-bench:check": "npm run coverage:gen && dialecte bench --check",
 		"type-narrowing": "npm run coverage:gen && dialecte narrowing",
 		"type-audit": "dialecte audit",
-		"lint:check": "oxlint",
-		"lint:fix": "oxlint . --fix -D correctness --ignore-path .gitignore",
-		"format:check": "oxfmt --check",
-		"format:fix": "oxfmt",
 		"//====== HOOKS ======//": "",
 		"prepare": "husky"
 	},
 	"dependencies": {
-		"@dialecte/core": "0.2.19"
+		"@dialecte/core": "0.2.21"
 	},
 	"devDependencies": {
 		"@dialecte/cli": "0.0.1",
@@ -68,7 +69,7 @@
 		"vite": "^8.0.16",
 		"vite-plugin-dts": "^5.0.2",
 		"vitepress": "^2.0.0-alpha.17",
-		"vitepress-plugin-llms": "^1.13.1",
+		"vitepress-plugin-llms": "^1.13.2",
 		"vitest": "^4.1.8"
 	}
 }
