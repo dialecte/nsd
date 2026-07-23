@@ -8,6 +8,11 @@ export namespace Nsd {
 	export type Project<GenericCustomModules extends Core.ExtensionModules = Record<never, never>> =
 		Core.Project<Config, NsdExtensions & GenericCustomModules>
 	export type Document = Core.Document<Config, NsdExtensions>
+
+	export type ExtendedDocument<
+		GenericCustomModules extends Core.ExtensionModules = Record<never, never>,
+	> = Core.ExtendedDocument<Config, NsdExtensions & GenericCustomModules>
+
 	export type Context = Core.Context<Config>
 
 	export type Query = Core.Query<Config> & Core.QueryExtensions<NsdExtensions>
