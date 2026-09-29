@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+## [0.2.0] - 2026-09-29
+
+### Added
+
+- The definition describes types and structure: `type` on attributes and text, `contentModel`, `nillable`, `anyNamespace`, text `default` / `fixed`.
+
+### Changed
+
+- Requires `@dialecte/core` 0.5.1.
+- Regenerating the definition needs `--root NS`: the schema lets four elements start a document.
+
+### Fixed
+
+- `DataAttribute`, `SubDataObject` and `ServiceParameter` are identified by their `name`, as the schema says.
+
 ## [0.1.9] - 2026-07-27
 
 - Bump `@dialecte/core` to `0.4.9`
