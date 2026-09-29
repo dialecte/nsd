@@ -9,8 +9,8 @@ export const DEFINITION = {
 		attributes: {
 			sequence: ['descID', 'name'],
 			details: {
-				descID: { facets: { minLength: 1, whiteSpace: 'replace' } },
-				name: { required: true, facets: { whiteSpace: 'replace' } },
+				descID: { type: { builtin: 'normalizedString' }, facets: { minLength: 1 } },
+				name: { type: { builtin: 'normalizedString' }, required: true },
 			},
 			identityFields: ['name'],
 		},
@@ -35,6 +35,12 @@ export const DEFINITION = {
 				Abbreviation: { required: true, minOccurs: 1 },
 			},
 		},
+		contentModel: {
+			kind: 'sequence',
+			minOccurs: 1,
+			maxOccurs: 1,
+			particles: [{ kind: 'element', name: 'Abbreviation', minOccurs: 1 }],
+		},
 		constraints: [
 			{
 				kind: 'unique',
@@ -53,24 +59,28 @@ export const DEFINITION = {
 			sequence: ['base', 'deprecated', 'descID', 'informative', 'name', 'titleID'],
 			details: {
 				base: {
+					type: { builtin: 'Name' },
 					facets: {
 						pattern: ['[\\x00-\\x7f\\x80-\\xff]+', '[A-Za-z_:][-.:0-9A-Z_a-z]*'],
 						minLength: 1,
-						whiteSpace: 'collapse',
 					},
 				},
-				deprecated: { default: 'false', facets: { whiteSpace: 'collapse' } },
-				descID: { facets: { minLength: 1, whiteSpace: 'replace' } },
-				informative: { default: 'false', facets: { whiteSpace: 'collapse' } },
+				deprecated: { type: { builtin: 'boolean' }, default: 'false' },
+				descID: { type: { builtin: 'normalizedString' }, facets: { minLength: 1 } },
+				informative: { type: { builtin: 'boolean' }, default: 'false' },
 				name: {
+					type: { builtin: 'Name' },
 					required: true,
 					facets: {
 						pattern: ['[\\x00-\\x7f\\x80-\\xff]+', '[A-Za-z_:][-.:0-9A-Z_a-z]*'],
 						minLength: 1,
-						whiteSpace: 'collapse',
 					},
 				},
-				titleID: { required: true, facets: { minLength: 1, whiteSpace: 'replace' } },
+				titleID: {
+					type: { builtin: 'normalizedString' },
+					required: true,
+					facets: { minLength: 1 },
+				},
 			},
 			identityFields: ['name'],
 		},
@@ -79,6 +89,19 @@ export const DEFINITION = {
 			details: {
 				DataObject: {},
 			},
+		},
+		contentModel: {
+			kind: 'sequence',
+			minOccurs: 1,
+			maxOccurs: 1,
+			particles: [
+				{
+					kind: 'sequence',
+					minOccurs: 1,
+					maxOccurs: 1,
+					particles: [{ kind: 'element', name: 'DataObject' }],
+				},
+			],
 		},
 		constraints: [
 			{
@@ -97,10 +120,11 @@ export const DEFINITION = {
 		attributes: {
 			sequence: ['date', 'version'],
 			details: {
-				date: { required: true, facets: { whiteSpace: 'collapse' } },
+				date: { type: { builtin: 'dateTime' }, required: true },
 				version: {
+					type: { builtin: 'unsignedInt' },
 					required: true,
-					facets: { minInclusive: 0, maxInclusive: 4294967295, whiteSpace: 'collapse' },
+					facets: { minInclusive: 0, maxInclusive: 4294967295 },
 				},
 			},
 		},
@@ -110,6 +134,25 @@ export const DEFINITION = {
 				Copyright: { maxOccurs: 1 },
 				ServiceNsUsage: { required: true, minOccurs: 1 },
 			},
+		},
+		contentModel: {
+			kind: 'sequence',
+			minOccurs: 1,
+			maxOccurs: 1,
+			particles: [
+				{
+					kind: 'sequence',
+					minOccurs: 1,
+					maxOccurs: 1,
+					particles: [{ kind: 'element', name: 'Copyright', maxOccurs: 1 }],
+				},
+				{
+					kind: 'sequence',
+					minOccurs: 1,
+					maxOccurs: 1,
+					particles: [{ kind: 'element', name: 'ServiceNsUsage', minOccurs: 1 }],
+				},
+			],
 		},
 	},
 	ApplicableServices: {
@@ -126,6 +169,15 @@ export const DEFINITION = {
 				Service: {},
 				DataSetMemberOf: {},
 			},
+		},
+		contentModel: {
+			kind: 'sequence',
+			minOccurs: 1,
+			maxOccurs: 1,
+			particles: [
+				{ kind: 'element', name: 'Service' },
+				{ kind: 'element', name: 'DataSetMemberOf' },
+			],
 		},
 		constraints: [
 			{
@@ -150,22 +202,26 @@ export const DEFINITION = {
 		attributes: {
 			sequence: ['id', 'publicationStage', 'release', 'revision', 'version'],
 			details: {
-				id: { required: true, facets: { pattern: ['\\x00-\\x7f+'], whiteSpace: 'replace' } },
+				id: {
+					type: { builtin: 'normalizedString' },
+					required: true,
+					facets: { pattern: ['\\x00-\\x7f+'] },
+				},
 				publicationStage: {
+					type: { builtin: 'token' },
 					default: 'IS',
-					facets: {
-						enumeration: ['WD', 'CD', 'CDV', 'DTS', 'DTR', 'FDIS', 'TS', 'TR', 'IS'],
-						whiteSpace: 'collapse',
-					},
+					facets: { enumeration: ['WD', 'CD', 'CDV', 'DTS', 'DTR', 'FDIS', 'TS', 'TR', 'IS'] },
 				},
 				release: {
+					type: { builtin: 'unsignedByte' },
 					default: '1',
-					facets: { minInclusive: 0, maxInclusive: 255, minExclusive: 0, whiteSpace: 'collapse' },
+					facets: { minInclusive: 0, maxInclusive: 255, minExclusive: 0 },
 				},
-				revision: { default: 'A', facets: { pattern: ['[A-Z]'], whiteSpace: 'collapse' } },
+				revision: { type: { builtin: 'token' }, default: 'A', facets: { pattern: ['[A-Z]'] } },
 				version: {
+					type: { builtin: 'unsignedShort' },
 					required: true,
-					facets: { minInclusive: 2002, maxInclusive: 2099, whiteSpace: 'collapse' },
+					facets: { minInclusive: 2002, maxInclusive: 2099 },
 				},
 			},
 		},
@@ -181,8 +237,8 @@ export const DEFINITION = {
 		attributes: {
 			sequence: ['descID', 'name'],
 			details: {
-				descID: { facets: { minLength: 1, whiteSpace: 'replace' } },
-				name: { required: true, facets: { minLength: 1, whiteSpace: 'collapse' } },
+				descID: { type: { builtin: 'normalizedString' }, facets: { minLength: 1 } },
+				name: { type: { builtin: 'token' }, required: true, facets: { minLength: 1 } },
 			},
 		},
 		children: {
@@ -206,6 +262,12 @@ export const DEFINITION = {
 				BasicType: { required: true, minOccurs: 1 },
 			},
 		},
+		contentModel: {
+			kind: 'sequence',
+			minOccurs: 1,
+			maxOccurs: 1,
+			particles: [{ kind: 'element', name: 'BasicType', minOccurs: 1 }],
+		},
 	},
 	CDC: {
 		tag: 'CDC',
@@ -225,22 +287,26 @@ export const DEFINITION = {
 				'variant',
 			],
 			details: {
-				deprecated: { default: 'false', facets: { whiteSpace: 'collapse' } },
-				descID: { facets: { minLength: 1, whiteSpace: 'replace' } },
-				enumParameterized: { default: 'false', facets: { whiteSpace: 'collapse' } },
-				informative: { default: 'false', facets: { whiteSpace: 'collapse' } },
+				deprecated: { type: { builtin: 'boolean' }, default: 'false' },
+				descID: { type: { builtin: 'normalizedString' }, facets: { minLength: 1 } },
+				enumParameterized: { type: { builtin: 'boolean' }, default: 'false' },
+				informative: { type: { builtin: 'boolean' }, default: 'false' },
 				name: {
+					type: { builtin: 'Name' },
 					required: true,
 					facets: {
 						pattern: ['[\\x00-\\x7f\\x80-\\xff]+', '[A-Za-z_:][-.:0-9A-Z_a-z]*'],
 						minLength: 1,
-						whiteSpace: 'collapse',
 					},
 				},
-				statistics: { default: 'false', facets: { whiteSpace: 'collapse' } },
-				titleID: { required: true, facets: { minLength: 1, whiteSpace: 'replace' } },
-				typeKindParameterized: { default: 'false', facets: { whiteSpace: 'collapse' } },
-				variant: { facets: { whiteSpace: 'collapse' } },
+				statistics: { type: { builtin: 'boolean' }, default: 'false' },
+				titleID: {
+					type: { builtin: 'normalizedString' },
+					required: true,
+					facets: { minLength: 1 },
+				},
+				typeKindParameterized: { type: { builtin: 'boolean' }, default: 'false' },
+				variant: { type: { builtin: 'token' } },
 			},
 			identityFields: ['name', 'variant'],
 		},
@@ -251,6 +317,16 @@ export const DEFINITION = {
 				DataAttribute: { required: true, minOccurs: 1 },
 				ServiceParameter: { maxOccurs: 1 },
 			},
+		},
+		contentModel: {
+			kind: 'sequence',
+			minOccurs: 1,
+			maxOccurs: 1,
+			particles: [
+				{ kind: 'element', name: 'SubDataObject' },
+				{ kind: 'element', name: 'DataAttribute', minOccurs: 1 },
+				{ kind: 'element', name: 'ServiceParameter', maxOccurs: 1 },
+			],
 		},
 		constraints: [
 			{
@@ -286,6 +362,12 @@ export const DEFINITION = {
 				},
 			},
 		},
+		contentModel: {
+			kind: 'sequence',
+			minOccurs: 1,
+			maxOccurs: 1,
+			particles: [{ kind: 'element', name: 'CDC' }],
+		},
 		constraints: [
 			{
 				kind: 'unique',
@@ -307,17 +389,19 @@ export const DEFINITION = {
 		attributes: {
 			sequence: ['changesID', 'date', 'release', 'revision', 'tissues', 'version'],
 			details: {
-				changesID: { facets: { minLength: 1, whiteSpace: 'replace' } },
-				date: { facets: { whiteSpace: 'collapse' } },
+				changesID: { type: { builtin: 'normalizedString' }, facets: { minLength: 1 } },
+				date: { type: { builtin: 'date' } },
 				release: {
+					type: { builtin: 'unsignedByte' },
 					default: '1',
-					facets: { minInclusive: 0, maxInclusive: 255, minExclusive: 0, whiteSpace: 'collapse' },
+					facets: { minInclusive: 0, maxInclusive: 255, minExclusive: 0 },
 				},
-				revision: { default: 'A', facets: { pattern: ['[A-Z]'], whiteSpace: 'collapse' } },
-				tissues: { facets: { minLength: 1, whiteSpace: 'replace' } },
+				revision: { type: { builtin: 'token' }, default: 'A', facets: { pattern: ['[A-Z]'] } },
+				tissues: { type: { builtin: 'normalizedString' }, facets: { minLength: 1 } },
 				version: {
+					type: { builtin: 'unsignedShort' },
 					required: true,
-					facets: { minInclusive: 2002, maxInclusive: 2099, whiteSpace: 'collapse' },
+					facets: { minInclusive: 2002, maxInclusive: 2099 },
 				},
 			},
 		},
@@ -342,19 +426,23 @@ export const DEFINITION = {
 				'xsi:type',
 			],
 			details: {
-				deprecated: { default: 'false', facets: { whiteSpace: 'collapse' } },
-				descID: { facets: { minLength: 1, whiteSpace: 'replace' } },
-				informative: { default: 'false', facets: { whiteSpace: 'collapse' } },
+				deprecated: { type: { builtin: 'boolean' }, default: 'false' },
+				descID: { type: { builtin: 'normalizedString' }, facets: { minLength: 1 } },
+				informative: { type: { builtin: 'boolean' }, default: 'false' },
 				name: {
+					type: { builtin: 'Name' },
 					required: true,
 					facets: {
 						pattern: ['[\\x00-\\x7f\\x80-\\xff]+', '[A-Za-z_:][-.:0-9A-Z_a-z]*'],
 						minLength: 1,
-						whiteSpace: 'collapse',
 					},
 				},
-				titleID: { required: true, facets: { minLength: 1, whiteSpace: 'replace' } },
-				typeKindParameterized: { default: 'false', facets: { whiteSpace: 'collapse' } },
+				titleID: {
+					type: { builtin: 'normalizedString' },
+					required: true,
+					facets: { minLength: 1 },
+				},
+				typeKindParameterized: { default: 'false' },
 				'xsi:type': {
 					namespace: { prefix: 'xsi', uri: 'http://www.w3.org/2001/XMLSchema-instance' },
 					facets: { enumeration: ['tServiceConstructedAttribute'] },
@@ -367,6 +455,12 @@ export const DEFINITION = {
 			details: {
 				SubDataAttribute: { required: true, minOccurs: 1 },
 			},
+		},
+		contentModel: {
+			kind: 'sequence',
+			minOccurs: 1,
+			maxOccurs: 1,
+			particles: [{ kind: 'element', name: 'SubDataAttribute', minOccurs: 1 }],
 		},
 		constraints: [
 			{
@@ -402,6 +496,12 @@ export const DEFINITION = {
 				},
 			},
 		},
+		contentModel: {
+			kind: 'sequence',
+			minOccurs: 1,
+			maxOccurs: 1,
+			particles: [{ kind: 'element', name: 'ConstructedAttribute' }],
+		},
 		constraints: [
 			{
 				kind: 'unique',
@@ -426,6 +526,15 @@ export const DEFINITION = {
 				Notice: { required: true, minOccurs: 1, maxOccurs: 1 },
 				License: { required: true, minOccurs: 1, maxOccurs: 1 },
 			},
+		},
+		contentModel: {
+			kind: 'sequence',
+			minOccurs: 1,
+			maxOccurs: 1,
+			particles: [
+				{ kind: 'element', name: 'Notice', minOccurs: 1, maxOccurs: 1 },
+				{ kind: 'element', name: 'License', minOccurs: 1, maxOccurs: 1 },
+			],
 		},
 	},
 	DataAttribute: {
@@ -456,64 +565,70 @@ export const DEFINITION = {
 				'typeKind',
 			],
 			details: {
-				dchg: { default: 'false', facets: { whiteSpace: 'collapse' } },
-				defaultValue: { facets: { whiteSpace: 'replace' } },
-				deprecated: { default: 'false', facets: { whiteSpace: 'collapse' } },
-				descID: { facets: { minLength: 1, whiteSpace: 'replace' } },
-				dupd: { default: 'false', facets: { whiteSpace: 'collapse' } },
+				dchg: { type: { builtin: 'boolean' }, default: 'false' },
+				defaultValue: { type: { builtin: 'normalizedString' } },
+				deprecated: { type: { builtin: 'boolean' }, default: 'false' },
+				descID: { type: { builtin: 'normalizedString' }, facets: { minLength: 1 } },
+				dupd: { type: { builtin: 'boolean' }, default: 'false' },
 				fc: {
+					type: { builtin: 'token' },
 					required: true,
-					facets: { pattern: ['[\\x00-\\x7f]+'], minLength: 1, whiteSpace: 'collapse' },
+					facets: { pattern: ['[\\x00-\\x7f]+'], minLength: 1 },
 				},
-				informative: { default: 'false', facets: { whiteSpace: 'collapse' } },
-				isArray: { default: 'false', facets: { whiteSpace: 'collapse' } },
+				informative: { type: { builtin: 'boolean' }, default: 'false' },
+				isArray: { type: { builtin: 'boolean' }, default: 'false' },
 				maxIndexAttribute: {
+					type: { builtin: 'Name' },
 					facets: {
 						pattern: ['[\\x00-\\x7f\\x80-\\xff]+', '[A-Za-z_:][-.:0-9A-Z_a-z]*'],
 						minLength: 1,
-						whiteSpace: 'collapse',
 					},
 				},
-				maxValue: { facets: { whiteSpace: 'collapse' } },
+				maxValue: { type: { builtin: 'decimal' } },
 				minIndex: {
+					type: { builtin: 'unsignedInt' },
 					default: '0',
-					facets: { minInclusive: 0, maxInclusive: 4294967295, whiteSpace: 'collapse' },
+					facets: { minInclusive: 0, maxInclusive: 4294967295 },
 				},
-				minValue: { facets: { whiteSpace: 'collapse' } },
+				minValue: { type: { builtin: 'decimal' } },
 				name: {
+					type: { builtin: 'Name' },
 					required: true,
 					facets: {
 						pattern: ['[\\x00-\\x7f\\x80-\\xff]+', '[A-Za-z_:][-.:0-9A-Z_a-z]*'],
 						minLength: 1,
-						whiteSpace: 'collapse',
 					},
 				},
-				presCond: { default: 'M', facets: { whiteSpace: 'replace' } },
-				presCondArgs: { facets: { whiteSpace: 'replace' } },
-				presCondArgsID: { facets: { minLength: 1, whiteSpace: 'replace' } },
-				qchg: { default: 'false', facets: { whiteSpace: 'collapse' } },
+				presCond: { type: { builtin: 'normalizedString' }, default: 'M' },
+				presCondArgs: { type: { builtin: 'normalizedString' } },
+				presCondArgsID: { type: { builtin: 'normalizedString' }, facets: { minLength: 1 } },
+				qchg: { type: { builtin: 'boolean' }, default: 'false' },
 				sizeAttribute: {
+					type: { builtin: 'Name' },
 					facets: {
 						pattern: ['[\\x00-\\x7f\\x80-\\xff]+', '[A-Za-z_:][-.:0-9A-Z_a-z]*'],
 						minLength: 1,
-						whiteSpace: 'collapse',
 					},
 				},
 				type: {
+					type: { builtin: 'Name' },
 					facets: {
 						pattern: ['[\\x00-\\x7f\\x80-\\xff]+', '[A-Za-z_:][-.:0-9A-Z_a-z]*'],
 						minLength: 1,
-						whiteSpace: 'collapse',
 					},
 				},
 				typeKind: {
-					default: 'BASIC',
-					facets: {
-						enumeration: ['BASIC', 'ENUMERATED', 'CONSTRUCTED', 'undefined'],
-						whiteSpace: 'collapse',
+					type: {
+						union: [
+							{ builtin: 'token', facets: { enumeration: ['BASIC', 'ENUMERATED', 'CONSTRUCTED'] } },
+							{ builtin: 'token', facets: { enumeration: ['undefined'] } },
+						],
 					},
+					default: 'BASIC',
+					facets: { enumeration: ['BASIC', 'ENUMERATED', 'CONSTRUCTED', 'undefined'] },
 				},
 			},
+			identityFields: ['name'],
 		},
 		children: {
 			sequence: [],
@@ -543,42 +658,43 @@ export const DEFINITION = {
 				'underlyingTypeKind',
 			],
 			details: {
-				deprecated: { default: 'false', facets: { whiteSpace: 'collapse' } },
-				descID: { facets: { minLength: 1, whiteSpace: 'replace' } },
-				dsPresCond: { default: 'M', facets: { whiteSpace: 'replace' } },
-				dsPresCondArgs: { facets: { whiteSpace: 'replace' } },
-				dsPresCondArgsID: { facets: { minLength: 1, whiteSpace: 'replace' } },
-				informative: { default: 'false', facets: { whiteSpace: 'collapse' } },
+				deprecated: { type: { builtin: 'boolean' }, default: 'false' },
+				descID: { type: { builtin: 'normalizedString' }, facets: { minLength: 1 } },
+				dsPresCond: { type: { builtin: 'normalizedString' }, default: 'M' },
+				dsPresCondArgs: { type: { builtin: 'normalizedString' } },
+				dsPresCondArgsID: { type: { builtin: 'normalizedString' }, facets: { minLength: 1 } },
+				informative: { type: { builtin: 'boolean' }, default: 'false' },
 				name: {
+					type: { builtin: 'Name' },
 					required: true,
 					facets: {
 						pattern: ['[\\x00-\\x7f\\x80-\\xff]+', '[A-Za-z_:][-.:0-9A-Z_a-z]*'],
 						minLength: 1,
 						maxLength: 12,
-						whiteSpace: 'collapse',
 					},
 				},
-				presCond: { default: 'M', facets: { whiteSpace: 'replace' } },
-				presCondArgs: { facets: { whiteSpace: 'replace' } },
-				presCondArgsID: { facets: { minLength: 1, whiteSpace: 'replace' } },
-				transient: { default: 'false', facets: { whiteSpace: 'collapse' } },
+				presCond: { type: { builtin: 'normalizedString' }, default: 'M' },
+				presCondArgs: { type: { builtin: 'normalizedString' } },
+				presCondArgsID: { type: { builtin: 'normalizedString' }, facets: { minLength: 1 } },
+				transient: { type: { builtin: 'boolean' }, default: 'false' },
 				type: {
+					type: { builtin: 'Name' },
 					required: true,
 					facets: {
 						pattern: ['[\\x00-\\x7f\\x80-\\xff]+', '[A-Za-z_:][-.:0-9A-Z_a-z]*'],
 						minLength: 1,
-						whiteSpace: 'collapse',
 					},
 				},
 				underlyingType: {
+					type: { builtin: 'Name' },
 					facets: {
 						pattern: ['[\\x00-\\x7f\\x80-\\xff]+', '[A-Za-z_:][-.:0-9A-Z_a-z]*'],
 						minLength: 1,
-						whiteSpace: 'collapse',
 					},
 				},
 				underlyingTypeKind: {
-					facets: { enumeration: ['BASIC', 'ENUMERATED', 'CONSTRUCTED'], whiteSpace: 'collapse' },
+					type: { builtin: 'token' },
+					facets: { enumeration: ['BASIC', 'ENUMERATED', 'CONSTRUCTED'] },
 				},
 			},
 			identityFields: ['name'],
@@ -598,8 +714,9 @@ export const DEFINITION = {
 			sequence: ['cb'],
 			details: {
 				cb: {
+					type: { builtin: 'normalizedString' },
 					required: true,
-					facets: { enumeration: ['RCB', 'LCB', 'GoCB', 'SVCB'], whiteSpace: 'replace' },
+					facets: { enumeration: ['RCB', 'LCB', 'GoCB', 'SVCB'] },
 				},
 			},
 			identityFields: ['cb'],
@@ -618,22 +735,26 @@ export const DEFINITION = {
 		attributes: {
 			sequence: ['id', 'publicationStage', 'release', 'revision', 'version'],
 			details: {
-				id: { required: true, facets: { pattern: ['\\x00-\\x7f+'], whiteSpace: 'replace' } },
+				id: {
+					type: { builtin: 'normalizedString' },
+					required: true,
+					facets: { pattern: ['\\x00-\\x7f+'] },
+				},
 				publicationStage: {
+					type: { builtin: 'token' },
 					default: 'IS',
-					facets: {
-						enumeration: ['WD', 'CD', 'CDV', 'DTS', 'DTR', 'FDIS', 'TS', 'TR', 'IS'],
-						whiteSpace: 'collapse',
-					},
+					facets: { enumeration: ['WD', 'CD', 'CDV', 'DTS', 'DTR', 'FDIS', 'TS', 'TR', 'IS'] },
 				},
 				release: {
+					type: { builtin: 'unsignedByte' },
 					default: '1',
-					facets: { minInclusive: 0, maxInclusive: 255, minExclusive: 0, whiteSpace: 'collapse' },
+					facets: { minInclusive: 0, maxInclusive: 255, minExclusive: 0 },
 				},
-				revision: { default: 'A', facets: { pattern: ['[A-Z]'], whiteSpace: 'collapse' } },
+				revision: { type: { builtin: 'token' }, default: 'A', facets: { pattern: ['[A-Z]'] } },
 				version: {
+					type: { builtin: 'unsignedShort' },
 					required: true,
-					facets: { minInclusive: 2002, maxInclusive: 2099, whiteSpace: 'collapse' },
+					facets: { minInclusive: 2002, maxInclusive: 2099 },
 				},
 			},
 		},
@@ -651,7 +772,7 @@ export const DEFINITION = {
 		attributes: {
 			sequence: ['id'],
 			details: {
-				id: { required: true, facets: { minLength: 1, whiteSpace: 'replace' } },
+				id: { type: { builtin: 'normalizedString' }, required: true, facets: { minLength: 1 } },
 			},
 			identityFields: ['id'],
 		},
@@ -659,6 +780,12 @@ export const DEFINITION = {
 			sequence: [],
 			any: true,
 			details: {},
+		},
+		contentModel: {
+			kind: 'sequence',
+			particles: [
+				{ kind: 'any', namespace: ['##any'], processContents: 'lax', minOccurs: 1, maxOccurs: 1 },
+			],
 		},
 		textContent: {},
 	},
@@ -670,25 +797,29 @@ export const DEFINITION = {
 		attributes: {
 			sequence: ['deprecated', 'descID', 'informative', 'inheritedFrom', 'name', 'titleID'],
 			details: {
-				deprecated: { default: 'false', facets: { whiteSpace: 'collapse' } },
-				descID: { facets: { minLength: 1, whiteSpace: 'replace' } },
-				informative: { default: 'false', facets: { whiteSpace: 'collapse' } },
+				deprecated: { type: { builtin: 'boolean' }, default: 'false' },
+				descID: { type: { builtin: 'normalizedString' }, facets: { minLength: 1 } },
+				informative: { type: { builtin: 'boolean' }, default: 'false' },
 				inheritedFrom: {
+					type: { builtin: 'Name' },
 					facets: {
 						pattern: ['[\\x00-\\x7f\\x80-\\xff]+', '[A-Za-z_:][-.:0-9A-Z_a-z]*'],
 						minLength: 1,
-						whiteSpace: 'collapse',
 					},
 				},
 				name: {
+					type: { builtin: 'Name' },
 					required: true,
 					facets: {
 						pattern: ['[\\x00-\\x7f\\x80-\\xff]+', '[A-Za-z_:][-.:0-9A-Z_a-z]*'],
 						minLength: 1,
-						whiteSpace: 'collapse',
 					},
 				},
-				titleID: { required: true, facets: { minLength: 1, whiteSpace: 'replace' } },
+				titleID: {
+					type: { builtin: 'normalizedString' },
+					required: true,
+					facets: { minLength: 1 },
+				},
 			},
 			identityFields: ['name'],
 		},
@@ -697,6 +828,12 @@ export const DEFINITION = {
 			details: {
 				Literal: { required: true, minOccurs: 1 },
 			},
+		},
+		contentModel: {
+			kind: 'sequence',
+			minOccurs: 1,
+			maxOccurs: 1,
+			particles: [{ kind: 'element', name: 'Literal', minOccurs: 1 }],
 		},
 		constraints: [
 			{
@@ -744,6 +881,12 @@ export const DEFINITION = {
 				},
 			},
 		},
+		contentModel: {
+			kind: 'sequence',
+			minOccurs: 1,
+			maxOccurs: 1,
+			particles: [{ kind: 'element', name: 'Enumeration' }],
+		},
 		constraints: [
 			{
 				kind: 'unique',
@@ -762,11 +905,12 @@ export const DEFINITION = {
 			sequence: ['abbreviation', 'descID', 'titleID'],
 			details: {
 				abbreviation: {
+					type: { builtin: 'token' },
 					required: true,
-					facets: { pattern: ['[\\x00-\\x7f]+'], minLength: 1, whiteSpace: 'collapse' },
+					facets: { pattern: ['[\\x00-\\x7f]+'], minLength: 1 },
 				},
-				descID: { facets: { minLength: 1, whiteSpace: 'replace' } },
-				titleID: { facets: { minLength: 1, whiteSpace: 'replace' } },
+				descID: { type: { builtin: 'normalizedString' }, facets: { minLength: 1 } },
+				titleID: { type: { builtin: 'normalizedString' }, facets: { minLength: 1 } },
 			},
 			identityFields: ['abbreviation'],
 		},
@@ -792,6 +936,12 @@ export const DEFINITION = {
 				},
 			},
 		},
+		contentModel: {
+			kind: 'sequence',
+			minOccurs: 1,
+			maxOccurs: 1,
+			particles: [{ kind: 'element', name: 'ApplicableServices', maxOccurs: 1 }],
+		},
 	},
 	FunctionalConstraints: {
 		tag: 'FunctionalConstraints',
@@ -808,6 +958,12 @@ export const DEFINITION = {
 			details: {
 				FunctionalConstraint: { required: true, minOccurs: 1 },
 			},
+		},
+		contentModel: {
+			kind: 'sequence',
+			minOccurs: 1,
+			maxOccurs: 1,
+			particles: [{ kind: 'element', name: 'FunctionalConstraint', minOccurs: 1 }],
 		},
 		constraints: [
 			{
@@ -836,25 +992,27 @@ export const DEFINITION = {
 			],
 			details: {
 				base: {
+					type: { builtin: 'Name' },
 					facets: {
 						pattern: ['[\\x00-\\x7f\\x80-\\xff]+', '[A-Za-z_:][-.:0-9A-Z_a-z]*'],
 						minLength: 1,
-						whiteSpace: 'collapse',
 					},
 				},
-				canHaveLOG: { default: 'false', facets: { whiteSpace: 'collapse' } },
-				deprecated: { default: 'false', facets: { whiteSpace: 'collapse' } },
-				descID: { facets: { minLength: 1, whiteSpace: 'replace' } },
-				informative: { default: 'false', facets: { whiteSpace: 'collapse' } },
-				isExtension: { default: 'false', facets: { whiteSpace: 'collapse' } },
+				canHaveLOG: { type: { builtin: 'boolean' }, default: 'false' },
+				deprecated: { type: { builtin: 'boolean' }, default: 'false' },
+				descID: { type: { builtin: 'normalizedString' }, facets: { minLength: 1 } },
+				informative: { type: { builtin: 'boolean' }, default: 'false' },
+				isExtension: { type: { builtin: 'boolean' }, default: 'false' },
 				name: {
+					type: { builtin: 'Name' },
 					required: true,
-					facets: {
-						pattern: ['LLN0', '[A-Z]{4}', '[A-Za-z_:][-.:0-9A-Z_a-z]*'],
-						whiteSpace: 'collapse',
-					},
+					facets: { pattern: ['LLN0', '[A-Z]{4}', '[A-Za-z_:][-.:0-9A-Z_a-z]*'] },
 				},
-				titleID: { required: true, facets: { minLength: 1, whiteSpace: 'replace' } },
+				titleID: {
+					type: { builtin: 'normalizedString' },
+					required: true,
+					facets: { minLength: 1 },
+				},
 			},
 			identityFields: ['name'],
 		},
@@ -863,6 +1021,19 @@ export const DEFINITION = {
 			details: {
 				DataObject: {},
 			},
+		},
+		contentModel: {
+			kind: 'sequence',
+			minOccurs: 1,
+			maxOccurs: 1,
+			particles: [
+				{
+					kind: 'sequence',
+					minOccurs: 1,
+					maxOccurs: 1,
+					particles: [{ kind: 'element', name: 'DataObject' }],
+				},
+			],
 		},
 		constraints: [
 			{
@@ -908,6 +1079,15 @@ export const DEFINITION = {
 				},
 			},
 		},
+		contentModel: {
+			kind: 'sequence',
+			minOccurs: 1,
+			maxOccurs: 1,
+			particles: [
+				{ kind: 'element', name: 'AbstractLNClass' },
+				{ kind: 'element', name: 'LNClass' },
+			],
+		},
 		constraints: [
 			{
 				kind: 'unique',
@@ -932,13 +1112,13 @@ export const DEFINITION = {
 			sequence: ['kind', 'uri'],
 			details: {
 				kind: {
+					type: { builtin: 'Name' },
 					facets: {
 						enumeration: ['Standard', 'Private', 'None'],
 						pattern: ['[A-Za-z_:][-.:0-9A-Z_a-z]*'],
-						whiteSpace: 'collapse',
 					},
 				},
-				uri: { facets: { whiteSpace: 'replace' } },
+				uri: { type: { builtin: 'normalizedString' } },
 			},
 		},
 		children: {
@@ -954,16 +1134,18 @@ export const DEFINITION = {
 		attributes: {
 			sequence: ['deprecated', 'descID', 'informative', 'literalVal', 'name'],
 			details: {
-				deprecated: { default: 'false', facets: { whiteSpace: 'collapse' } },
-				descID: { facets: { minLength: 1, whiteSpace: 'replace' } },
-				informative: { default: 'false', facets: { whiteSpace: 'collapse' } },
+				deprecated: { type: { builtin: 'boolean' }, default: 'false' },
+				descID: { type: { builtin: 'normalizedString' }, facets: { minLength: 1 } },
+				informative: { type: { builtin: 'boolean' }, default: 'false' },
 				literalVal: {
+					type: { builtin: 'int' },
 					required: true,
-					facets: { minInclusive: -2147483648, maxInclusive: 2147483647, whiteSpace: 'collapse' },
+					facets: { minInclusive: -2147483648, maxInclusive: 2147483647 },
 				},
 				name: {
+					type: { builtin: 'normalizedString' },
 					required: true,
-					facets: { pattern: ['[\\x00-\\x7f\\x80-\\xff]*'], maxLength: 127, whiteSpace: 'replace' },
+					facets: { pattern: ['[\\x00-\\x7f\\x80-\\xff]*'], maxLength: 127 },
 				},
 			},
 			identityFields: ['literalVal', 'name'],
@@ -990,27 +1172,32 @@ export const DEFINITION = {
 				'version',
 			],
 			details: {
-				descID: { facets: { minLength: 1, whiteSpace: 'replace' } },
-				id: { required: true, facets: { pattern: ['\\x00-\\x7f+'], whiteSpace: 'replace' } },
+				descID: { type: { builtin: 'normalizedString' }, facets: { minLength: 1 } },
+				id: {
+					type: { builtin: 'normalizedString' },
+					required: true,
+					facets: { pattern: ['\\x00-\\x7f+'] },
+				},
 				publicationStage: {
+					type: { builtin: 'token' },
 					default: 'IS',
-					facets: {
-						enumeration: ['WD', 'CD', 'CDV', 'DTS', 'DTR', 'FDIS', 'TS', 'TR', 'IS'],
-						whiteSpace: 'collapse',
-					},
+					facets: { enumeration: ['WD', 'CD', 'CDV', 'DTS', 'DTR', 'FDIS', 'TS', 'TR', 'IS'] },
 				},
 				release: {
+					type: { builtin: 'unsignedByte' },
 					default: '1',
-					facets: { minInclusive: 0, maxInclusive: 255, minExclusive: 0, whiteSpace: 'collapse' },
+					facets: { minInclusive: 0, maxInclusive: 255, minExclusive: 0 },
 				},
-				revision: { default: 'A', facets: { pattern: ['[A-Z]'], whiteSpace: 'collapse' } },
-				umlDate: { facets: { whiteSpace: 'collapse' } },
+				revision: { type: { builtin: 'token' }, default: 'A', facets: { pattern: ['[A-Z]'] } },
+				umlDate: { type: { builtin: 'dateTime' } },
 				umlVersion: {
-					facets: { pattern: ['[A-Za-z_:][-.:0-9A-Z_a-z]*'], minLength: 1, whiteSpace: 'collapse' },
+					type: { builtin: 'Name' },
+					facets: { pattern: ['[A-Za-z_:][-.:0-9A-Z_a-z]*'], minLength: 1 },
 				},
 				version: {
+					type: { builtin: 'unsignedShort' },
 					required: true,
-					facets: { minInclusive: 2002, maxInclusive: 2099, whiteSpace: 'collapse' },
+					facets: { minInclusive: 2002, maxInclusive: 2099 },
 				},
 			},
 		},
@@ -1121,6 +1308,36 @@ export const DEFINITION = {
 				},
 			},
 		},
+		contentModel: {
+			kind: 'sequence',
+			minOccurs: 1,
+			maxOccurs: 1,
+			particles: [
+				{
+					kind: 'sequence',
+					minOccurs: 1,
+					maxOccurs: 1,
+					particles: [{ kind: 'element', name: 'Copyright', maxOccurs: 1 }],
+				},
+				{
+					kind: 'sequence',
+					minOccurs: 1,
+					maxOccurs: 1,
+					particles: [
+						{ kind: 'element', name: 'Changes', maxOccurs: 1 },
+						{ kind: 'element', name: 'DependsOn', maxOccurs: 1 },
+						{ kind: 'element', name: 'BasicTypes', maxOccurs: 1 },
+						{ kind: 'element', name: 'FunctionalConstraints', maxOccurs: 1 },
+						{ kind: 'element', name: 'PresenceConditions', maxOccurs: 1 },
+						{ kind: 'element', name: 'Abbreviations', maxOccurs: 1 },
+						{ kind: 'element', name: 'Enumerations', maxOccurs: 1 },
+						{ kind: 'element', name: 'ConstructedAttributes', maxOccurs: 1 },
+						{ kind: 'element', name: 'CDCs', maxOccurs: 1 },
+						{ kind: 'element', name: 'LNClasses', maxOccurs: 1 },
+					],
+				},
+			],
+		},
 	},
 	NSDoc: {
 		tag: 'NSDoc',
@@ -1140,30 +1357,36 @@ export const DEFINITION = {
 				'version',
 			],
 			details: {
-				id: { required: true, facets: { pattern: ['\\x00-\\x7f+'], whiteSpace: 'replace' } },
-				lang: {
+				id: {
+					type: { builtin: 'normalizedString' },
 					required: true,
-					facets: { pattern: ['[a-zA-Z]{1,8}(-[a-zA-Z0-9]{1,8})*'], whiteSpace: 'collapse' },
+					facets: { pattern: ['\\x00-\\x7f+'] },
+				},
+				lang: {
+					type: { builtin: 'language' },
+					required: true,
+					facets: { pattern: ['[a-zA-Z]{1,8}(-[a-zA-Z0-9]{1,8})*'] },
 				},
 				publicationStage: {
+					type: { builtin: 'token' },
 					default: 'IS',
-					facets: {
-						enumeration: ['WD', 'CD', 'CDV', 'DTS', 'DTR', 'FDIS', 'TS', 'TR', 'IS'],
-						whiteSpace: 'collapse',
-					},
+					facets: { enumeration: ['WD', 'CD', 'CDV', 'DTS', 'DTR', 'FDIS', 'TS', 'TR', 'IS'] },
 				},
 				release: {
+					type: { builtin: 'unsignedByte' },
 					default: '1',
-					facets: { minInclusive: 0, maxInclusive: 255, minExclusive: 0, whiteSpace: 'collapse' },
+					facets: { minInclusive: 0, maxInclusive: 255, minExclusive: 0 },
 				},
-				revision: { default: 'A', facets: { pattern: ['[A-Z]'], whiteSpace: 'collapse' } },
-				umlDate: { facets: { whiteSpace: 'collapse' } },
+				revision: { type: { builtin: 'token' }, default: 'A', facets: { pattern: ['[A-Z]'] } },
+				umlDate: { type: { builtin: 'dateTime' } },
 				umlVersion: {
-					facets: { pattern: ['[A-Za-z_:][-.:0-9A-Z_a-z]*'], minLength: 1, whiteSpace: 'collapse' },
+					type: { builtin: 'Name' },
+					facets: { pattern: ['[A-Za-z_:][-.:0-9A-Z_a-z]*'], minLength: 1 },
 				},
 				version: {
+					type: { builtin: 'unsignedShort' },
 					required: true,
-					facets: { minInclusive: 2002, maxInclusive: 2099, whiteSpace: 'collapse' },
+					facets: { minInclusive: 2002, maxInclusive: 2099 },
 				},
 			},
 		},
@@ -1173,6 +1396,25 @@ export const DEFINITION = {
 				Copyright: { maxOccurs: 1 },
 				Doc: { required: true, minOccurs: 1 },
 			},
+		},
+		contentModel: {
+			kind: 'sequence',
+			minOccurs: 1,
+			maxOccurs: 1,
+			particles: [
+				{
+					kind: 'sequence',
+					minOccurs: 1,
+					maxOccurs: 1,
+					particles: [{ kind: 'element', name: 'Copyright', maxOccurs: 1 }],
+				},
+				{
+					kind: 'sequence',
+					minOccurs: 1,
+					maxOccurs: 1,
+					particles: [{ kind: 'element', name: 'Doc', minOccurs: 1 }],
+				},
+			],
 		},
 		constraints: [
 			{
@@ -1206,10 +1448,10 @@ export const DEFINITION = {
 		attributes: {
 			sequence: ['argument', 'descID', 'name', 'titleID'],
 			details: {
-				argument: { facets: { whiteSpace: 'replace' } },
-				descID: { facets: { minLength: 1, whiteSpace: 'replace' } },
-				name: { required: true, facets: { whiteSpace: 'replace' } },
-				titleID: { facets: { minLength: 1, whiteSpace: 'replace' } },
+				argument: { type: { builtin: 'normalizedString' } },
+				descID: { type: { builtin: 'normalizedString' }, facets: { minLength: 1 } },
+				name: { type: { builtin: 'normalizedString' }, required: true },
+				titleID: { type: { builtin: 'normalizedString' }, facets: { minLength: 1 } },
 			},
 			identityFields: ['name'],
 		},
@@ -1234,6 +1476,12 @@ export const DEFINITION = {
 				PresenceCondition: { required: true, minOccurs: 1 },
 			},
 		},
+		contentModel: {
+			kind: 'sequence',
+			minOccurs: 1,
+			maxOccurs: 1,
+			particles: [{ kind: 'element', name: 'PresenceCondition', minOccurs: 1 }],
+		},
 		constraints: [
 			{
 				kind: 'unique',
@@ -1253,6 +1501,7 @@ export const DEFINITION = {
 			sequence: ['name'],
 			details: {
 				name: {
+					type: { builtin: 'token' },
 					required: true,
 					facets: {
 						enumeration: [
@@ -1316,7 +1565,6 @@ export const DEFINITION = {
 							'GetUsvReference',
 							'GetUSVElementNumber',
 						],
-						whiteSpace: 'collapse',
 					},
 				},
 			},
@@ -1336,14 +1584,14 @@ export const DEFINITION = {
 			sequence: ['cdc', 'variant'],
 			details: {
 				cdc: {
+					type: { builtin: 'Name' },
 					required: true,
 					facets: {
 						pattern: ['[\\x00-\\x7f\\x80-\\xff]+', '[A-Za-z_:][-.:0-9A-Z_a-z]*'],
 						minLength: 1,
-						whiteSpace: 'collapse',
 					},
 				},
-				variant: { facets: { whiteSpace: 'collapse' } },
+				variant: { type: { builtin: 'token' } },
 			},
 			identityFields: ['cdc', 'variant'],
 		},
@@ -1352,6 +1600,12 @@ export const DEFINITION = {
 			details: {
 				ServiceDataAttribute: { required: true, minOccurs: 1 },
 			},
+		},
+		contentModel: {
+			kind: 'sequence',
+			minOccurs: 1,
+			maxOccurs: 1,
+			particles: [{ kind: 'element', name: 'ServiceDataAttribute', minOccurs: 1 }],
 		},
 		constraints: [
 			{
@@ -1387,6 +1641,12 @@ export const DEFINITION = {
 				},
 			},
 		},
+		contentModel: {
+			kind: 'sequence',
+			minOccurs: 1,
+			maxOccurs: 1,
+			particles: [{ kind: 'element', name: 'ServiceCDC' }],
+		},
 		constraints: [
 			{
 				kind: 'unique',
@@ -1408,19 +1668,23 @@ export const DEFINITION = {
 		attributes: {
 			sequence: ['deprecated', 'descID', 'informative', 'name', 'titleID', 'typeKindParameterized'],
 			details: {
-				deprecated: { default: 'false', facets: { whiteSpace: 'collapse' } },
-				descID: { facets: { minLength: 1, whiteSpace: 'replace' } },
-				informative: { default: 'false', facets: { whiteSpace: 'collapse' } },
+				deprecated: { type: { builtin: 'boolean' }, default: 'false' },
+				descID: { type: { builtin: 'normalizedString' }, facets: { minLength: 1 } },
+				informative: { type: { builtin: 'boolean' }, default: 'false' },
 				name: {
+					type: { builtin: 'Name' },
 					required: true,
 					facets: {
 						pattern: ['[\\x00-\\x7f\\x80-\\xff]+', '[A-Za-z_:][-.:0-9A-Z_a-z]*'],
 						minLength: 1,
-						whiteSpace: 'collapse',
 					},
 				},
-				titleID: { required: true, facets: { minLength: 1, whiteSpace: 'replace' } },
-				typeKindParameterized: { default: 'false', facets: { whiteSpace: 'collapse' } },
+				titleID: {
+					type: { builtin: 'normalizedString' },
+					required: true,
+					facets: { minLength: 1 },
+				},
+				typeKindParameterized: { type: { builtin: 'boolean' }, default: 'false' },
 			},
 			identityFields: ['name'],
 		},
@@ -1429,6 +1693,19 @@ export const DEFINITION = {
 			details: {
 				SubDataAttribute: { required: true, minOccurs: 1 },
 			},
+		},
+		contentModel: {
+			kind: 'sequence',
+			minOccurs: 1,
+			maxOccurs: 1,
+			particles: [
+				{
+					kind: 'sequence',
+					minOccurs: 1,
+					maxOccurs: 1,
+					particles: [{ kind: 'element', name: 'SubDataAttribute', minOccurs: 1 }],
+				},
+			],
 		},
 		constraints: [
 			{
@@ -1464,6 +1741,12 @@ export const DEFINITION = {
 				},
 			},
 		},
+		contentModel: {
+			kind: 'sequence',
+			minOccurs: 1,
+			maxOccurs: 1,
+			particles: [{ kind: 'element', name: 'ServiceConstructedAttribute' }],
+		},
 		constraints: [
 			{
 				kind: 'unique',
@@ -1494,47 +1777,52 @@ export const DEFINITION = {
 				'underlyingTypeKind',
 			],
 			details: {
-				deprecated: { default: 'false', facets: { whiteSpace: 'collapse' } },
-				descID: { facets: { minLength: 1, whiteSpace: 'replace' } },
+				deprecated: { type: { builtin: 'boolean' }, default: 'false' },
+				descID: { type: { builtin: 'normalizedString' }, facets: { minLength: 1 } },
 				fc: {
+					type: { builtin: 'token' },
 					required: true,
-					facets: { pattern: ['[\\x00-\\x7f]+'], minLength: 1, whiteSpace: 'collapse' },
+					facets: { pattern: ['[\\x00-\\x7f]+'], minLength: 1 },
 				},
-				informative: { default: 'false', facets: { whiteSpace: 'collapse' } },
+				informative: { type: { builtin: 'boolean' }, default: 'false' },
 				name: {
+					type: { builtin: 'Name' },
 					required: true,
 					facets: {
 						pattern: ['[\\x00-\\x7f\\x80-\\xff]+', '[A-Za-z_:][-.:0-9A-Z_a-z]*'],
 						minLength: 1,
-						whiteSpace: 'collapse',
 					},
 				},
-				presCond: { default: 'M', facets: { whiteSpace: 'replace' } },
-				presCondArgs: { facets: { whiteSpace: 'replace' } },
-				presCondArgsID: { facets: { minLength: 1, whiteSpace: 'replace' } },
+				presCond: { type: { builtin: 'normalizedString' }, default: 'M' },
+				presCondArgs: { type: { builtin: 'normalizedString' } },
+				presCondArgsID: { type: { builtin: 'normalizedString' }, facets: { minLength: 1 } },
 				type: {
+					type: { builtin: 'Name' },
 					facets: {
 						pattern: ['[\\x00-\\x7f\\x80-\\xff]+', '[A-Za-z_:][-.:0-9A-Z_a-z]*'],
 						minLength: 1,
-						whiteSpace: 'collapse',
 					},
 				},
 				typeKind: {
-					default: 'BASIC',
-					facets: {
-						enumeration: ['BASIC', 'ENUMERATED', 'CONSTRUCTED', 'undefined'],
-						whiteSpace: 'collapse',
+					type: {
+						union: [
+							{ builtin: 'token', facets: { enumeration: ['BASIC', 'ENUMERATED', 'CONSTRUCTED'] } },
+							{ builtin: 'token', facets: { enumeration: ['undefined'] } },
+						],
 					},
+					default: 'BASIC',
+					facets: { enumeration: ['BASIC', 'ENUMERATED', 'CONSTRUCTED', 'undefined'] },
 				},
 				underlyingType: {
+					type: { builtin: 'Name' },
 					facets: {
 						pattern: ['[\\x00-\\x7f\\x80-\\xff]+', '[A-Za-z_:][-.:0-9A-Z_a-z]*'],
 						minLength: 1,
-						whiteSpace: 'collapse',
 					},
 				},
 				underlyingTypeKind: {
-					facets: { enumeration: ['BASIC', 'ENUMERATED', 'CONSTRUCTED'], whiteSpace: 'collapse' },
+					type: { builtin: 'token' },
+					facets: { enumeration: ['BASIC', 'ENUMERATED', 'CONSTRUCTED'] },
 				},
 			},
 			identityFields: ['name'],
@@ -1561,27 +1849,32 @@ export const DEFINITION = {
 				'version',
 			],
 			details: {
-				descID: { facets: { minLength: 1, whiteSpace: 'replace' } },
-				id: { required: true, facets: { pattern: ['\\x00-\\x7f+'], whiteSpace: 'replace' } },
+				descID: { type: { builtin: 'normalizedString' }, facets: { minLength: 1 } },
+				id: {
+					type: { builtin: 'normalizedString' },
+					required: true,
+					facets: { pattern: ['\\x00-\\x7f+'] },
+				},
 				publicationStage: {
+					type: { builtin: 'token' },
 					default: 'IS',
-					facets: {
-						enumeration: ['WD', 'CD', 'CDV', 'DTS', 'DTR', 'FDIS', 'TS', 'TR', 'IS'],
-						whiteSpace: 'collapse',
-					},
+					facets: { enumeration: ['WD', 'CD', 'CDV', 'DTS', 'DTR', 'FDIS', 'TS', 'TR', 'IS'] },
 				},
 				release: {
+					type: { builtin: 'unsignedByte' },
 					default: '1',
-					facets: { minInclusive: 0, maxInclusive: 255, minExclusive: 0, whiteSpace: 'collapse' },
+					facets: { minInclusive: 0, maxInclusive: 255, minExclusive: 0 },
 				},
-				revision: { default: 'A', facets: { pattern: ['[A-Z]'], whiteSpace: 'collapse' } },
-				umlDate: { facets: { whiteSpace: 'collapse' } },
+				revision: { type: { builtin: 'token' }, default: 'A', facets: { pattern: ['[A-Z]'] } },
+				umlDate: { type: { builtin: 'dateTime' } },
 				umlVersion: {
-					facets: { pattern: ['[A-Za-z_:][-.:0-9A-Z_a-z]*'], minLength: 1, whiteSpace: 'collapse' },
+					type: { builtin: 'Name' },
+					facets: { pattern: ['[A-Za-z_:][-.:0-9A-Z_a-z]*'], minLength: 1 },
 				},
 				version: {
+					type: { builtin: 'unsignedShort' },
 					required: true,
-					facets: { minInclusive: 2002, maxInclusive: 2099, whiteSpace: 'collapse' },
+					facets: { minInclusive: 2002, maxInclusive: 2099 },
 				},
 			},
 		},
@@ -1660,6 +1953,33 @@ export const DEFINITION = {
 				},
 			},
 		},
+		contentModel: {
+			kind: 'sequence',
+			minOccurs: 1,
+			maxOccurs: 1,
+			particles: [
+				{
+					kind: 'sequence',
+					minOccurs: 1,
+					maxOccurs: 1,
+					particles: [{ kind: 'element', name: 'Copyright', maxOccurs: 1 }],
+				},
+				{
+					kind: 'sequence',
+					minOccurs: 1,
+					maxOccurs: 1,
+					particles: [
+						{ kind: 'element', name: 'Changes', maxOccurs: 1 },
+						{ kind: 'element', name: 'FunctionalConstraints', maxOccurs: 1 },
+						{ kind: 'element', name: 'PresenceConditions', maxOccurs: 1 },
+						{ kind: 'element', name: 'Abbreviations', maxOccurs: 1 },
+						{ kind: 'element', name: 'ServiceTypeRealizations', maxOccurs: 1 },
+						{ kind: 'element', name: 'ServiceConstructedAttributes', maxOccurs: 1 },
+						{ kind: 'element', name: 'ServiceCDCs', maxOccurs: 1 },
+					],
+				},
+			],
+		},
 	},
 	ServiceNsUsage: {
 		tag: 'ServiceNsUsage',
@@ -1669,22 +1989,26 @@ export const DEFINITION = {
 		attributes: {
 			sequence: ['id', 'publicationStage', 'release', 'revision', 'version'],
 			details: {
-				id: { required: true, facets: { pattern: ['\\x00-\\x7f+'], whiteSpace: 'replace' } },
+				id: {
+					type: { builtin: 'normalizedString' },
+					required: true,
+					facets: { pattern: ['\\x00-\\x7f+'] },
+				},
 				publicationStage: {
+					type: { builtin: 'token' },
 					default: 'IS',
-					facets: {
-						enumeration: ['WD', 'CD', 'CDV', 'DTS', 'DTR', 'FDIS', 'TS', 'TR', 'IS'],
-						whiteSpace: 'collapse',
-					},
+					facets: { enumeration: ['WD', 'CD', 'CDV', 'DTS', 'DTR', 'FDIS', 'TS', 'TR', 'IS'] },
 				},
 				release: {
+					type: { builtin: 'unsignedByte' },
 					default: '1',
-					facets: { minInclusive: 0, maxInclusive: 255, minExclusive: 0, whiteSpace: 'collapse' },
+					facets: { minInclusive: 0, maxInclusive: 255, minExclusive: 0 },
 				},
-				revision: { default: 'A', facets: { pattern: ['[A-Z]'], whiteSpace: 'collapse' } },
+				revision: { type: { builtin: 'token' }, default: 'A', facets: { pattern: ['[A-Z]'] } },
 				version: {
+					type: { builtin: 'unsignedShort' },
 					required: true,
-					facets: { minInclusive: 2002, maxInclusive: 2099, whiteSpace: 'collapse' },
+					facets: { minInclusive: 2002, maxInclusive: 2099 },
 				},
 			},
 		},
@@ -1693,6 +2017,12 @@ export const DEFINITION = {
 			details: {
 				AppliesTo: { required: true, minOccurs: 1 },
 			},
+		},
+		contentModel: {
+			kind: 'sequence',
+			minOccurs: 1,
+			maxOccurs: 1,
+			particles: [{ kind: 'element', name: 'AppliesTo', minOccurs: 1 }],
 		},
 	},
 	ServiceParameter: {
@@ -1712,35 +2042,39 @@ export const DEFINITION = {
 				'typeKind',
 			],
 			details: {
-				defaultValue: { facets: { whiteSpace: 'replace' } },
-				deprecated: { default: 'false', facets: { whiteSpace: 'collapse' } },
-				descID: { facets: { minLength: 1, whiteSpace: 'replace' } },
-				informative: { default: 'false', facets: { whiteSpace: 'collapse' } },
-				maxValue: { facets: { whiteSpace: 'collapse' } },
-				minValue: { facets: { whiteSpace: 'collapse' } },
+				defaultValue: { type: { builtin: 'normalizedString' } },
+				deprecated: { type: { builtin: 'boolean' }, default: 'false' },
+				descID: { type: { builtin: 'normalizedString' }, facets: { minLength: 1 } },
+				informative: { type: { builtin: 'boolean' }, default: 'false' },
+				maxValue: { type: { builtin: 'decimal' } },
+				minValue: { type: { builtin: 'decimal' } },
 				name: {
+					type: { builtin: 'Name' },
 					required: true,
 					facets: {
 						pattern: ['[\\x00-\\x7f\\x80-\\xff]+', '[A-Za-z_:][-.:0-9A-Z_a-z]*'],
 						minLength: 1,
-						whiteSpace: 'collapse',
 					},
 				},
 				type: {
+					type: { builtin: 'Name' },
 					facets: {
 						pattern: ['[\\x00-\\x7f\\x80-\\xff]+', '[A-Za-z_:][-.:0-9A-Z_a-z]*'],
 						minLength: 1,
-						whiteSpace: 'collapse',
 					},
 				},
 				typeKind: {
-					default: 'BASIC',
-					facets: {
-						enumeration: ['BASIC', 'ENUMERATED', 'CONSTRUCTED', 'undefined'],
-						whiteSpace: 'collapse',
+					type: {
+						union: [
+							{ builtin: 'token', facets: { enumeration: ['BASIC', 'ENUMERATED', 'CONSTRUCTED'] } },
+							{ builtin: 'token', facets: { enumeration: ['undefined'] } },
+						],
 					},
+					default: 'BASIC',
+					facets: { enumeration: ['BASIC', 'ENUMERATED', 'CONSTRUCTED', 'undefined'] },
 				},
 			},
+			identityFields: ['name'],
 		},
 		children: {
 			sequence: [],
@@ -1764,19 +2098,23 @@ export const DEFINITION = {
 				'xsi:type',
 			],
 			details: {
-				deprecated: { default: 'false', facets: { whiteSpace: 'collapse' } },
-				descID: { facets: { minLength: 1, whiteSpace: 'replace' } },
-				informative: { default: 'false', facets: { whiteSpace: 'collapse' } },
+				deprecated: { type: { builtin: 'boolean' }, default: 'false' },
+				descID: { type: { builtin: 'normalizedString' }, facets: { minLength: 1 } },
+				informative: { type: { builtin: 'boolean' }, default: 'false' },
 				name: {
+					type: { builtin: 'Name' },
 					required: true,
 					facets: {
 						pattern: ['[\\x00-\\x7f\\x80-\\xff]+', '[A-Za-z_:][-.:0-9A-Z_a-z]*'],
 						minLength: 1,
-						whiteSpace: 'collapse',
 					},
 				},
-				titleID: { required: true, facets: { minLength: 1, whiteSpace: 'replace' } },
-				typeKindParameterized: { default: 'false', facets: { whiteSpace: 'collapse' } },
+				titleID: {
+					type: { builtin: 'normalizedString' },
+					required: true,
+					facets: { minLength: 1 },
+				},
+				typeKindParameterized: { default: 'false' },
 				'xsi:type': {
 					namespace: { prefix: 'xsi', uri: 'http://www.w3.org/2001/XMLSchema-instance' },
 					facets: { enumeration: ['tServiceConstructedAttribute'] },
@@ -1788,6 +2126,12 @@ export const DEFINITION = {
 			details: {
 				SubDataAttribute: { required: true, minOccurs: 1 },
 			},
+		},
+		contentModel: {
+			kind: 'sequence',
+			minOccurs: 1,
+			maxOccurs: 1,
+			particles: [{ kind: 'element', name: 'SubDataAttribute', minOccurs: 1 }],
 		},
 	},
 	ServiceTypeRealizations: {
@@ -1805,6 +2149,12 @@ export const DEFINITION = {
 			details: {
 				ServiceTypeRealization: {},
 			},
+		},
+		contentModel: {
+			kind: 'sequence',
+			minOccurs: 1,
+			maxOccurs: 1,
+			particles: [{ kind: 'element', name: 'ServiceTypeRealization' }],
 		},
 	},
 	SubDataAttribute: {
@@ -1831,55 +2181,59 @@ export const DEFINITION = {
 				'typeKind',
 			],
 			details: {
-				defaultValue: { facets: { whiteSpace: 'replace' } },
-				deprecated: { default: 'false', facets: { whiteSpace: 'collapse' } },
-				descID: { facets: { minLength: 1, whiteSpace: 'replace' } },
-				informative: { default: 'false', facets: { whiteSpace: 'collapse' } },
-				isArray: { default: 'false', facets: { whiteSpace: 'collapse' } },
+				defaultValue: { type: { builtin: 'normalizedString' } },
+				deprecated: { type: { builtin: 'boolean' }, default: 'false' },
+				descID: { type: { builtin: 'normalizedString' }, facets: { minLength: 1 } },
+				informative: { type: { builtin: 'boolean' }, default: 'false' },
+				isArray: { type: { builtin: 'boolean' }, default: 'false' },
 				maxIndexAttribute: {
+					type: { builtin: 'Name' },
 					facets: {
 						pattern: ['[\\x00-\\x7f\\x80-\\xff]+', '[A-Za-z_:][-.:0-9A-Z_a-z]*'],
 						minLength: 1,
-						whiteSpace: 'collapse',
 					},
 				},
-				maxValue: { facets: { whiteSpace: 'collapse' } },
+				maxValue: { type: { builtin: 'decimal' } },
 				minIndex: {
+					type: { builtin: 'unsignedInt' },
 					default: '0',
-					facets: { minInclusive: 0, maxInclusive: 4294967295, whiteSpace: 'collapse' },
+					facets: { minInclusive: 0, maxInclusive: 4294967295 },
 				},
-				minValue: { facets: { whiteSpace: 'collapse' } },
+				minValue: { type: { builtin: 'decimal' } },
 				name: {
+					type: { builtin: 'Name' },
 					required: true,
 					facets: {
 						pattern: ['[\\x00-\\x7f\\x80-\\xff]+', '[A-Za-z_:][-.:0-9A-Z_a-z]*'],
 						minLength: 1,
-						whiteSpace: 'collapse',
 					},
 				},
-				presCond: { default: 'M', facets: { whiteSpace: 'replace' } },
-				presCondArgs: { facets: { whiteSpace: 'replace' } },
-				presCondArgsID: { facets: { minLength: 1, whiteSpace: 'replace' } },
+				presCond: { type: { builtin: 'normalizedString' }, default: 'M' },
+				presCondArgs: { type: { builtin: 'normalizedString' } },
+				presCondArgsID: { type: { builtin: 'normalizedString' }, facets: { minLength: 1 } },
 				sizeAttribute: {
+					type: { builtin: 'Name' },
 					facets: {
 						pattern: ['[\\x00-\\x7f\\x80-\\xff]+', '[A-Za-z_:][-.:0-9A-Z_a-z]*'],
 						minLength: 1,
-						whiteSpace: 'collapse',
 					},
 				},
 				type: {
+					type: { builtin: 'Name' },
 					facets: {
 						pattern: ['[\\x00-\\x7f\\x80-\\xff]+', '[A-Za-z_:][-.:0-9A-Z_a-z]*'],
 						minLength: 1,
-						whiteSpace: 'collapse',
 					},
 				},
 				typeKind: {
-					default: 'BASIC',
-					facets: {
-						enumeration: ['BASIC', 'ENUMERATED', 'CONSTRUCTED', 'undefined'],
-						whiteSpace: 'collapse',
+					type: {
+						union: [
+							{ builtin: 'token', facets: { enumeration: ['BASIC', 'ENUMERATED', 'CONSTRUCTED'] } },
+							{ builtin: 'token', facets: { enumeration: ['undefined'] } },
+						],
 					},
+					default: 'BASIC',
+					facets: { enumeration: ['BASIC', 'ENUMERATED', 'CONSTRUCTED', 'undefined'] },
 				},
 			},
 			identityFields: ['name'],
@@ -1911,58 +2265,61 @@ export const DEFINITION = {
 				'underlyingTypeKind',
 			],
 			details: {
-				deprecated: { default: 'false', facets: { whiteSpace: 'collapse' } },
-				descID: { facets: { minLength: 1, whiteSpace: 'replace' } },
-				informative: { default: 'false', facets: { whiteSpace: 'collapse' } },
-				isArray: { default: 'false', facets: { whiteSpace: 'collapse' } },
+				deprecated: { type: { builtin: 'boolean' }, default: 'false' },
+				descID: { type: { builtin: 'normalizedString' }, facets: { minLength: 1 } },
+				informative: { type: { builtin: 'boolean' }, default: 'false' },
+				isArray: { type: { builtin: 'boolean' }, default: 'false' },
 				maxIndexAttribute: {
+					type: { builtin: 'Name' },
 					facets: {
 						pattern: ['[\\x00-\\x7f\\x80-\\xff]+', '[A-Za-z_:][-.:0-9A-Z_a-z]*'],
 						minLength: 1,
-						whiteSpace: 'collapse',
 					},
 				},
 				minIndex: {
+					type: { builtin: 'unsignedInt' },
 					default: '0',
-					facets: { minInclusive: 0, maxInclusive: 4294967295, whiteSpace: 'collapse' },
+					facets: { minInclusive: 0, maxInclusive: 4294967295 },
 				},
 				name: {
+					type: { builtin: 'Name' },
 					required: true,
 					facets: {
 						pattern: ['[\\x00-\\x7f\\x80-\\xff]+', '[A-Za-z_:][-.:0-9A-Z_a-z]*'],
 						minLength: 1,
-						whiteSpace: 'collapse',
 					},
 				},
-				presCond: { default: 'M', facets: { whiteSpace: 'replace' } },
-				presCondArgs: { facets: { whiteSpace: 'replace' } },
-				presCondArgsID: { facets: { minLength: 1, whiteSpace: 'replace' } },
+				presCond: { type: { builtin: 'normalizedString' }, default: 'M' },
+				presCondArgs: { type: { builtin: 'normalizedString' } },
+				presCondArgsID: { type: { builtin: 'normalizedString' }, facets: { minLength: 1 } },
 				sizeAttribute: {
+					type: { builtin: 'Name' },
 					facets: {
 						pattern: ['[\\x00-\\x7f\\x80-\\xff]+', '[A-Za-z_:][-.:0-9A-Z_a-z]*'],
 						minLength: 1,
-						whiteSpace: 'collapse',
 					},
 				},
 				type: {
+					type: { builtin: 'Name' },
 					required: true,
 					facets: {
 						pattern: ['[\\x00-\\x7f\\x80-\\xff]+', '[A-Za-z_:][-.:0-9A-Z_a-z]*'],
 						minLength: 1,
-						whiteSpace: 'collapse',
 					},
 				},
 				underlyingType: {
+					type: { builtin: 'Name' },
 					facets: {
 						pattern: ['[\\x00-\\x7f\\x80-\\xff]+', '[A-Za-z_:][-.:0-9A-Z_a-z]*'],
 						minLength: 1,
-						whiteSpace: 'collapse',
 					},
 				},
 				underlyingTypeKind: {
-					facets: { enumeration: ['BASIC', 'ENUMERATED', 'CONSTRUCTED'], whiteSpace: 'collapse' },
+					type: { builtin: 'token' },
+					facets: { enumeration: ['BASIC', 'ENUMERATED', 'CONSTRUCTED'] },
 				},
 			},
+			identityFields: ['name'],
 		},
 		children: {
 			sequence: [],

@@ -499,6 +499,120 @@ export type AttributesMap = {
 
 export type AttributesOf<T extends AvailableElement> = AttributesMap[T]
 
+/**
+ * The attributes of a child AS DECLARED UNDER each parent. An element declared once has the
+ * same type under every parent; a homonym has the type of its declaration under each. Read
+ * through the dialecte's `AttributesOf<Element, Parent>`; the constant `ATTRIBUTES.byParent`
+ * is checked against this map.
+ */
+export type AttributesByParent = {
+	Abbreviations: {
+		Abbreviation: AttributesAbbreviation
+	}
+	AbstractLNClass: {
+		DataObject: AttributesDataObject
+	}
+	ApplicableServiceNS: {
+		Copyright: AttributesCopyright
+		ServiceNsUsage: AttributesServiceNsUsage
+	}
+	ApplicableServices: {
+		Service: AttributesService
+		DataSetMemberOf: AttributesDataSetMemberOf
+	}
+	BasicTypes: {
+		BasicType: AttributesBasicType
+	}
+	CDC: {
+		SubDataObject: AttributesSubDataObject
+		DataAttribute: AttributesDataAttribute
+		ServiceParameter: AttributesServiceParameter
+	}
+	CDCs: {
+		CDC: AttributesCDC
+	}
+	ConstructedAttribute: {
+		SubDataAttribute: AttributesSubDataAttribute
+	}
+	ConstructedAttributes: {
+		ConstructedAttribute: AttributesConstructedAttribute
+	}
+	Copyright: {
+		Notice: AttributesNotice
+		License: AttributesLicense
+	}
+	Enumeration: {
+		Literal: AttributesLiteral
+	}
+	Enumerations: {
+		Enumeration: AttributesEnumeration
+	}
+	FunctionalConstraint: {
+		ApplicableServices: AttributesApplicableServices
+	}
+	FunctionalConstraints: {
+		FunctionalConstraint: AttributesFunctionalConstraint
+	}
+	LNClass: {
+		DataObject: AttributesDataObject
+	}
+	LNClasses: {
+		AbstractLNClass: AttributesAbstractLNClass
+		LNClass: AttributesLNClass
+	}
+	NS: {
+		Copyright: AttributesCopyright
+		Changes: AttributesChanges
+		DependsOn: AttributesDependsOn
+		BasicTypes: AttributesBasicTypes
+		FunctionalConstraints: AttributesFunctionalConstraints
+		PresenceConditions: AttributesPresenceConditions
+		Abbreviations: AttributesAbbreviations
+		Enumerations: AttributesEnumerations
+		ConstructedAttributes: AttributesConstructedAttributes
+		CDCs: AttributesCDCs
+		LNClasses: AttributesLNClasses
+	}
+	NSDoc: {
+		Copyright: AttributesCopyright
+		Doc: AttributesDoc
+	}
+	PresenceConditions: {
+		PresenceCondition: AttributesPresenceCondition
+	}
+	ServiceCDC: {
+		ServiceDataAttribute: AttributesServiceDataAttribute
+	}
+	ServiceCDCs: {
+		ServiceCDC: AttributesServiceCDC
+	}
+	ServiceConstructedAttribute: {
+		SubDataAttribute: AttributesSubDataAttribute
+	}
+	ServiceConstructedAttributes: {
+		ServiceConstructedAttribute: AttributesServiceConstructedAttribute
+	}
+	ServiceNS: {
+		Copyright: AttributesCopyright
+		Changes: AttributesChanges
+		FunctionalConstraints: AttributesFunctionalConstraints
+		PresenceConditions: AttributesPresenceConditions
+		Abbreviations: AttributesAbbreviations
+		ServiceTypeRealizations: AttributesServiceTypeRealizations
+		ServiceConstructedAttributes: AttributesServiceConstructedAttributes
+		ServiceCDCs: AttributesServiceCDCs
+	}
+	ServiceNsUsage: {
+		AppliesTo: AttributesAppliesTo
+	}
+	ServiceTypeRealization: {
+		SubDataAttribute: AttributesSubDataAttribute
+	}
+	ServiceTypeRealizations: {
+		ServiceTypeRealization: AttributesServiceTypeRealization
+	}
+}
+
 export type RequiredAttributeNames<T extends AvailableElement> =
 	(typeof REQUIRED_ATTRIBUTES)[T][number]
 export type OptionalAttributeNames<T extends AvailableElement> = Exclude<
