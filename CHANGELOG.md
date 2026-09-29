@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-09-29
+
+### Added
+
+- `runNsdTestCases` and `createNsdTestProject` check every fixture against the NSD schema before running; `assertValidNsdXml` is exported for your own checks.
+
 ## [0.2.0] - 2026-09-29
 
 ### Added

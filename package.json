@@ -1,6 +1,6 @@
 {
 	"name": "@dialecte/nsd",
-	"version": "0.2.0",
+	"version": "0.2.1",
 	"description": "Dialecte - NSD (Network Substation Description) sdk",
 	"license": "MIT",
 	"repository": {
@@ -61,9 +61,9 @@
 		"husky": "^9.1.7",
 		"jiti": "^2.4.2",
 		"npm-run-all2": "^8.0.4",
-		"oxfmt": "^0.53.0",
-		"oxlint": "^1.68.0",
-		"oxlint-tsgolint": "^0.23.0",
+		"oxfmt": "^0.71.0",
+		"oxlint": "^1.86.0",
+		"oxlint-tsgolint": "^7.0.2003",
 		"playwright": "^1.60.0",
 		"tsx": "^4.22.4",
 		"typescript": "npm:@typescript/typescript6@^6.0.2",
