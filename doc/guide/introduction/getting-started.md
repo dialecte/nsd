@@ -19,7 +19,7 @@ $ pnpm add @dialecte/nsd
 `createNsdProject` returns a [`Project`](https://dialecte.github.io/core/api/project) pre-configured with the NSD config and extensions. Call `.open(name)` to initialize storage and hydrate state.
 
 ```ts
-import { createNsdProject } from '@dialecte/nsd'
+import { createNsdProject } from '@dialecte/nsd/v2017A'
 
 const project = await createNsdProject({ storage: { type: 'local' } }).open('my-project')
 ```

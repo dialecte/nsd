@@ -16,14 +16,29 @@ NSD files are the engineering-time type catalog for IEC 61850 systems — captur
 
 ### 1. Generated definition
 
-The NSD definition is produced from the **IEC 61850 NSD XSD**. Every element, attribute, parent-child constraint, and namespace declared in the standard is captured in a typed config object. Two configs are provided:
+The NSD definition is generated from the **IEC 61850 NSD XSD** by `@dialecte/create`. Every element, attribute, parent-child constraint and namespace declared in the standard is captured in a typed config object:
+
+- a tag the schema declares several ways lists its declarations
+- a value's facets (`enumeration`, `minLength`, ...) sit in its datatype
+- the content model and the identity fields sit on the declaration that declares them
+- `TYPES` holds the types an element may take with `xsi:type`; the config carries it as `NSD_DIALECTE_CONFIG.types`
+
+Read an element's definition through `query.getDefinition(ref)`: it returns the declaration that applies under the element's parent, and what the type it names with `xsi:type` lets it hold. Code that reads `DEFINITION` directly must handle the declarations itself.
+
+`DataAttribute`, `SubDataObject` and `ServiceParameter` are identified by their `name`, as the schema says.
+
+Two configs are provided:
 
 - `NSD_DIALECTE_CONFIG` — for `.nsd` files (root element: `NS`)
 - `NSDOC_DIALECTE_CONFIG` — for `.nsdoc` files (root element: `NSDoc`)
 
 ```ts
-import { createNsdProject } from '@dialecte/nsd'
+import { createNsdProject } from '@dialecte/nsd/v2017A'
 ```
+
+::: tip Regenerating the definition
+The schema lets four elements start a document. Regenerate with `@dialecte/create` and `--root NS`.
+:::
 
 ### 2. Domain extensions
 
