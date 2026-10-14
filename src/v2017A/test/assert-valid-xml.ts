@@ -12,6 +12,7 @@ import { NSD_DIALECTE_CONFIG } from '@/v2017A/config'
  */
 const { assertValidXml, assertValidXmlTestCases } = createXmlSchemaAssertions({
 	definition: NSD_DIALECTE_CONFIG.definition,
+	types: NSD_DIALECTE_CONFIG.types,
 	namespaces: NSD_DIALECTE_CONFIG.namespaces,
 	schemaName: 'Nsd',
 })

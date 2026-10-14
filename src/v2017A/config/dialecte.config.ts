@@ -1,5 +1,6 @@
 import {
 	DEFINITION,
+	TYPES,
 	ELEMENT_NAMES,
 	ATTRIBUTES,
 	CHILDREN,
@@ -46,6 +47,7 @@ const SHARED_CONFIG = {
 	database: NSD_DATABASE_CONFIG,
 	io: NSD_IO_CONFIG,
 	definition: DEFINITION,
+	types: TYPES,
 } as const
 
 export const NSD_DIALECTE_CONFIG = {
