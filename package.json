@@ -1,6 +1,6 @@
 {
 	"name": "@dialecte/nsd",
-	"version": "0.2.1",
+	"version": "0.3.0",
 	"description": "Dialecte - NSD (Network Substation Description) sdk",
 	"license": "MIT",
 	"repository": {

@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-10-14
+
+### Changed
+
+- **Breaking - built on `@dialecte/core` 0.6 and the definition `@dialecte/create` 0.1 writes.** `DEFINITION` has the new shape: a tag declared several ways lists its declarations, a value's facets sit in its datatype, identity constraints sit on the declaration that declares them, and `TYPES` holds the types an element may take with `xsi:type`. `NSD_DIALECTE_CONFIG` carries `types`. Code that reads `DEFINITION` directly must follow; code that goes through `query.getDefinition` gets the declaration that applies.
+- **Breaking:** an element's attribute type (`AttributesOf`) lists its declaration's attributes only; `xsi:type` is an optional key, only where the element may name a type.
+
 ## [0.2.1] - 2026-09-29
 
 ### Added
