@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-10-14
+
+### Changed
+
+- **Breaking (types): an element that may take another type with `xsi:type` is a union on `'xsi:type'`**, one named member per type (`AttributesConstructedAttribute_tServiceConstructedAttribute`; `_Own` for the element's own attributes). An attribute only one type declares is typed on that member: write it with the type, `addChild(parent, { tagName: 'ConstructedAttribute', attributes: { 'xsi:type': 'tServiceConstructedAttribute', name, titleID, typeKindParameterized } })`. A filter may leave the type out and match across types, or name it to narrow. Generated with `@dialecte/create` 0.1; a test checks the config's namespaces agree with the definition.
+- Requires `@dialecte/core` 0.6.1: `assertValidNsdXml`, `runNsdTestCases` and `createNsdTestProject` check the attributes of every namespace and allow what an element's attribute wildcard allows - a fixture carrying an attribute its element does not declare now fails.
+
 ## [0.3.0] - 2026-10-14
 
 ### Changed
