@@ -1,24 +1,27 @@
 ---
-description: Test helpers for @dialecte/nsd — createNsdTestProject, runNsdTestCases, XML assertions, and namespace constants.
+description: Test helpers for @dialecte/nsd — createNsdTestProject, runNsdTestCases, fixture validation, XML assertions, and namespace constants.
 ---
 
 # Test Helpers
 
-`@dialecte/nsd` ships a test entry point with NSD-specific utilities. Import from `@dialecte/nsd/test`:
+`@dialecte/nsd` ships a test entry point with NSD-specific utilities. Import from `@dialecte/nsd/v2017A/test`:
 
 ```ts
 import {
 	runNsdTestCases,
 	createNsdTestProject,
 	createNsdTestRecord,
+	assertValidNsdXml,
 	assertExpectedElementQueries,
 	assertUnexpectedElementQueries,
+	XMLNS_NSD_NAMESPACE,
 	ALL_XMLNS_NAMESPACES,
 	CUSTOM_RECORD_ID_ATTRIBUTE,
-} from '@dialecte/nsd/test'
+	CUSTOM_RECORD_ID_ATTRIBUTE_NAME,
+} from '@dialecte/nsd/v2017A/test'
 ```
 
-All helpers are wired to the NSD config internally — no config argument needed.
+All helpers are wired to the NSD config internally — no config argument needed. Every fixture is checked against the schema before it runs — see [Fixture validation](#fixture-validation).
 
 ## runNsdTestCases
 
@@ -42,10 +45,10 @@ import {
 	runNsdTestCases,
 	ALL_XMLNS_NAMESPACES,
 	CUSTOM_RECORD_ID_ATTRIBUTE,
-} from '@dialecte/nsd/test'
-import type { NsdTest } from '@dialecte/nsd/test'
+} from '@dialecte/nsd/v2017A/test'
+import type { NsdTest } from '@dialecte/nsd/v2017A/test'
 
-type TestCase = NsdTest.BaseTestCase & {
+type TestCase = NsdTest.BaseXmlTestCase & {
 	expectedCount: number
 }
 
@@ -84,8 +87,8 @@ Use when `act` performs transactions and assertions must run on the exported XML
 
 ```ts
 import { describe } from 'vitest'
-import { runNsdTestCases, ALL_XMLNS_NAMESPACES } from '@dialecte/nsd/test'
-import type { NsdTest } from '@dialecte/nsd/test'
+import { runNsdTestCases, ALL_XMLNS_NAMESPACES } from '@dialecte/nsd/v2017A/test'
+import type { NsdTest } from '@dialecte/nsd/v2017A/test'
 
 type TestCase = NsdTest.BaseXmlTestCase & {
 	lnClassName: string
@@ -147,7 +150,7 @@ import {
 	createNsdTestProject,
 	ALL_XMLNS_NAMESPACES,
 	CUSTOM_RECORD_ID_ATTRIBUTE,
-} from '@dialecte/nsd/test'
+} from '@dialecte/nsd/v2017A/test'
 
 const { project, source } = await createNsdTestProject({
 	sourceXml: `
@@ -172,6 +175,39 @@ Use `runNsdTestCases` when the test fits the standard source → act → assert 
 
 - Asserting intermediate states between transactions
 - Multiple exports at different stages
+
+---
+
+## Fixture validation
+
+`runNsdTestCases.withExport`, `runNsdTestCases.withoutExport` and `createNsdTestProject` check every fixture (`sourceXml`, `targetXml`) against the NSD schema before anything runs. A mistyped tag, a wrong namespace or an unknown attribute fails loudly — the runners report every invalid case at once — instead of the suite quietly testing something else.
+
+The check is structural:
+
+- every element's namespace matches its parent context
+- every element is an allowed child of its parent
+- every attribute is one its element declares, in whatever namespace the package declares, or one the element's attribute wildcard allows
+
+`xmlns` declarations, `xsi:*` attributes and `dev:db-id` are always allowed. Elements unknown to the schema, and elements in a namespace the package does not declare, are skipped.
+
+Required attributes are not required there: the runners and `createNsdTestProject` pass `requireComplete: false`, so a minimal fixture may leave them out (`<NS>` without `id` and `version`, `<LNClass name="XCBR"/>` without `titleID`).
+
+### assertValidNsdXml
+
+The same check, for your own fixtures. Throws when the XML is not valid NSD.
+
+```ts
+import { assertValidNsdXml } from '@dialecte/nsd/v2017A/test'
+
+assertValidNsdXml(xml)
+assertValidNsdXml(xml, 'targetXml', { requireComplete: false })
+```
+
+| Parameter                 | Description                                                                 |
+| ------------------------- | --------------------------------------------------------------------------- |
+| `xml`                     | The document to check                                                       |
+| `label`                   | Names the document in the error message. Optional.                          |
+| `options.requireComplete` | Also require every schema-required attribute to be present. Default `true`. |
 
 ---
 
@@ -235,11 +271,12 @@ During `act`, `crypto.randomUUID` is replaced with a counter mock — IDs for ne
 
 ## Namespace constants
 
-| Constant                     | Value                                                        |
-| ---------------------------- | ------------------------------------------------------------ |
-| `XMLNS_NSD_NAMESPACE`        | `xmlns="http://www.iec.ch/61850/2016/NSD"`                   |
-| `ALL_XMLNS_NAMESPACES`       | NSD namespace + dev namespace + xsi namespace combined       |
-| `CUSTOM_RECORD_ID_ATTRIBUTE` | `dev:db-id="..."` — attribute string for use in XML fixtures |
+| Constant                          | Value                                                        |
+| --------------------------------- | ------------------------------------------------------------ |
+| `XMLNS_NSD_NAMESPACE`             | `xmlns="http://www.iec.ch/61850/2016/NSD"`                   |
+| `ALL_XMLNS_NAMESPACES`            | NSD namespace + dev namespace + xsi namespace combined       |
+| `CUSTOM_RECORD_ID_ATTRIBUTE`      | `dev:db-id="..."` — attribute string for use in XML fixtures |
+| `CUSTOM_RECORD_ID_ATTRIBUTE_NAME` | `db-id` — the attribute's local name                         |
 
 ```ts
 const xml = `<NS ${ALL_XMLNS_NAMESPACES}><LNClass name="XCBR" ${CUSTOM_RECORD_ID_ATTRIBUTE}="lnclass-1"/></NS>`
