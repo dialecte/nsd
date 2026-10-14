@@ -26,6 +26,7 @@ export const DEFINITION = {
 			sequence: [],
 			details: {},
 		},
+		type: '{http://www.iec.ch/61850/2016/NSD}tAbbreviation',
 	},
 	Abbreviations: {
 		tag: 'Abbreviations',
@@ -47,6 +48,7 @@ export const DEFINITION = {
 			maxOccurs: 1,
 			particles: [{ kind: 'element', name: 'Abbreviation', minOccurs: 1 }],
 		},
+		type: '{http://www.iec.ch/61850/2016/NSD}tAbbreviations',
 		declarations: {
 			'1': {
 				namespace: { prefix: '', uri: 'http://www.iec.ch/61850/2016/NSD' },
@@ -86,6 +88,7 @@ export const DEFINITION = {
 						],
 					},
 				],
+				type: '{http://www.iec.ch/61850/2016/NSD}tAbbreviations',
 			},
 			'2': {
 				namespace: { prefix: '', uri: 'http://www.iec.ch/61850/2016/NSD' },
@@ -125,6 +128,7 @@ export const DEFINITION = {
 						],
 					},
 				],
+				type: '{http://www.iec.ch/61850/2016/NSD}tAbbreviations',
 			},
 		},
 	},
@@ -216,6 +220,7 @@ export const DEFINITION = {
 				],
 			},
 		],
+		type: '{http://www.iec.ch/61850/2016/NSD}tAbstractLNClass',
 	},
 	ApplicableServiceNS: {
 		tag: 'ApplicableServiceNS',
@@ -259,6 +264,7 @@ export const DEFINITION = {
 				},
 			],
 		},
+		type: '{http://www.iec.ch/61850/2016/NSD}tApplicableServiceNS',
 	},
 	ApplicableServices: {
 		tag: 'ApplicableServices',
@@ -319,6 +325,7 @@ export const DEFINITION = {
 				],
 			},
 		],
+		type: '{http://www.iec.ch/61850/2016/NSD}tApplicableServices',
 	},
 	AppliesTo: {
 		tag: 'AppliesTo',
@@ -400,6 +407,7 @@ export const DEFINITION = {
 			sequence: [],
 			details: {},
 		},
+		type: '{http://www.iec.ch/61850/2016/NSD}tBasicType',
 	},
 	BasicTypes: {
 		tag: 'BasicTypes',
@@ -421,6 +429,7 @@ export const DEFINITION = {
 			maxOccurs: 1,
 			particles: [{ kind: 'element', name: 'BasicType', minOccurs: 1 }],
 		},
+		type: '{http://www.iec.ch/61850/2016/NSD}tBasicTypes',
 	},
 	CDC: {
 		tag: 'CDC',
@@ -523,6 +532,7 @@ export const DEFINITION = {
 				],
 			},
 		],
+		type: '{http://www.iec.ch/61850/2016/NSD}tCDC',
 	},
 	CDCs: {
 		tag: 'CDCs',
@@ -570,6 +580,7 @@ export const DEFINITION = {
 				],
 			},
 		],
+		type: '{http://www.iec.ch/61850/2016/NSD}tCDCs',
 	},
 	Changes: {
 		tag: 'Changes',
@@ -624,6 +635,7 @@ export const DEFINITION = {
 			sequence: [],
 			details: {},
 		},
+		type: '{http://www.iec.ch/61850/2016/NSD}tChanges',
 	},
 	ConstructedAttribute: {
 		tag: 'ConstructedAttribute',
@@ -697,6 +709,7 @@ export const DEFINITION = {
 				],
 			},
 		],
+		type: '{http://www.iec.ch/61850/2016/NSD}tConstructedAttribute',
 		variants: ['{http://www.iec.ch/61850/2016/NSD}tServiceConstructedAttribute'],
 	},
 	ConstructedAttributes: {
@@ -741,6 +754,7 @@ export const DEFINITION = {
 				],
 			},
 		],
+		type: '{http://www.iec.ch/61850/2016/NSD}tConstructedAttributes',
 	},
 	Copyright: {
 		tag: 'Copyright',
@@ -765,6 +779,7 @@ export const DEFINITION = {
 				{ kind: 'element', name: 'License', minOccurs: 1, maxOccurs: 1 },
 			],
 		},
+		type: '{http://www.iec.ch/61850/2016/NSD}tCopyrightNotice',
 	},
 	DataAttribute: {
 		tag: 'DataAttribute',
@@ -919,6 +934,7 @@ export const DEFINITION = {
 			sequence: [],
 			details: {},
 		},
+		type: '{http://www.iec.ch/61850/2016/NSD}tDataAttribute',
 	},
 	DataObject: {
 		tag: 'DataObject',
@@ -1030,6 +1046,7 @@ export const DEFINITION = {
 			sequence: [],
 			details: {},
 		},
+		type: '{http://www.iec.ch/61850/2016/NSD}tDataObject',
 	},
 	DataSetMemberOf: {
 		tag: 'DataSetMemberOf',
@@ -1054,6 +1071,7 @@ export const DEFINITION = {
 			sequence: [],
 			details: {},
 		},
+		type: '{http://www.iec.ch/61850/2016/NSD}tDataSetMemberOf',
 	},
 	DependsOn: {
 		tag: 'DependsOn',
@@ -1141,6 +1159,7 @@ export const DEFINITION = {
 			],
 		},
 		textContent: {},
+		type: '{http://www.iec.ch/61850/2016/NSD}tDoc',
 	},
 	Enumeration: {
 		tag: 'Enumeration',
@@ -1241,6 +1260,7 @@ export const DEFINITION = {
 				],
 			},
 		],
+		type: '{http://www.iec.ch/61850/2016/NSD}tEnumeration',
 	},
 	Enumerations: {
 		tag: 'Enumerations',
@@ -1282,6 +1302,7 @@ export const DEFINITION = {
 				],
 			},
 		],
+		type: '{http://www.iec.ch/61850/2016/NSD}tEnumerations',
 	},
 	FunctionalConstraint: {
 		tag: 'FunctionalConstraint',
@@ -1326,6 +1347,7 @@ export const DEFINITION = {
 			maxOccurs: 1,
 			particles: [{ kind: 'element', name: 'ApplicableServices', maxOccurs: 1 }],
 		},
+		type: '{http://www.iec.ch/61850/2016/NSD}tFunctionalConstraint',
 	},
 	FunctionalConstraints: {
 		tag: 'FunctionalConstraints',
@@ -1347,6 +1369,7 @@ export const DEFINITION = {
 			maxOccurs: 1,
 			particles: [{ kind: 'element', name: 'FunctionalConstraint', minOccurs: 1 }],
 		},
+		type: '{http://www.iec.ch/61850/2016/NSD}tFunctionalConstraints',
 		declarations: {
 			'1': {
 				namespace: { prefix: '', uri: 'http://www.iec.ch/61850/2016/NSD' },
@@ -1388,6 +1411,7 @@ export const DEFINITION = {
 						],
 					},
 				],
+				type: '{http://www.iec.ch/61850/2016/NSD}tFunctionalConstraints',
 			},
 			'2': {
 				namespace: { prefix: '', uri: 'http://www.iec.ch/61850/2016/NSD' },
@@ -1429,6 +1453,7 @@ export const DEFINITION = {
 						],
 					},
 				],
+				type: '{http://www.iec.ch/61850/2016/NSD}tFunctionalConstraints',
 			},
 		},
 	},
@@ -1536,6 +1561,7 @@ export const DEFINITION = {
 				],
 			},
 		],
+		type: '{http://www.iec.ch/61850/2016/NSD}tLNClass',
 	},
 	LNClasses: {
 		tag: 'LNClasses',
@@ -1598,6 +1624,7 @@ export const DEFINITION = {
 				],
 			},
 		],
+		type: '{http://www.iec.ch/61850/2016/NSD}tLNClasses',
 	},
 	License: {
 		tag: 'License',
@@ -1623,6 +1650,7 @@ export const DEFINITION = {
 			details: {},
 		},
 		textContent: {},
+		type: '{http://www.iec.ch/61850/2016/NSD}tLicense',
 	},
 	Literal: {
 		tag: 'Literal',
@@ -1666,6 +1694,7 @@ export const DEFINITION = {
 			sequence: [],
 			details: {},
 		},
+		type: '{http://www.iec.ch/61850/2016/NSD}tLiteral',
 	},
 	NS: {
 		tag: 'NS',
@@ -1797,6 +1826,7 @@ export const DEFINITION = {
 				},
 			],
 		},
+		type: '{http://www.iec.ch/61850/2016/NSD}tNS',
 	},
 	NSDoc: {
 		tag: 'NSDoc',
@@ -1914,6 +1944,7 @@ export const DEFINITION = {
 				],
 			},
 		],
+		type: '{http://www.iec.ch/61850/2016/NSD}tNSDoc',
 	},
 	Notice: {
 		tag: 'Notice',
@@ -1929,6 +1960,7 @@ export const DEFINITION = {
 			details: {},
 		},
 		textContent: {},
+		type: '{http://www.iec.ch/61850/2016/NSD}tNotice',
 	},
 	PresenceCondition: {
 		tag: 'PresenceCondition',
@@ -1964,6 +1996,7 @@ export const DEFINITION = {
 			sequence: [],
 			details: {},
 		},
+		type: '{http://www.iec.ch/61850/2016/NSD}tPresenceCondition',
 	},
 	PresenceConditions: {
 		tag: 'PresenceConditions',
@@ -1985,6 +2018,7 @@ export const DEFINITION = {
 			maxOccurs: 1,
 			particles: [{ kind: 'element', name: 'PresenceCondition', minOccurs: 1 }],
 		},
+		type: '{http://www.iec.ch/61850/2016/NSD}tPresenceConditions',
 		declarations: {
 			'1': {
 				namespace: { prefix: '', uri: 'http://www.iec.ch/61850/2016/NSD' },
@@ -2026,6 +2060,7 @@ export const DEFINITION = {
 						],
 					},
 				],
+				type: '{http://www.iec.ch/61850/2016/NSD}tPresenceConditions',
 			},
 			'2': {
 				namespace: { prefix: '', uri: 'http://www.iec.ch/61850/2016/NSD' },
@@ -2067,6 +2102,7 @@ export const DEFINITION = {
 						],
 					},
 				],
+				type: '{http://www.iec.ch/61850/2016/NSD}tPresenceConditions',
 			},
 		},
 	},
@@ -2212,6 +2248,7 @@ export const DEFINITION = {
 				],
 			},
 		],
+		type: '{http://www.iec.ch/61850/2016/NSD}tServiceCDC',
 	},
 	ServiceCDCs: {
 		tag: 'ServiceCDCs',
@@ -2259,6 +2296,7 @@ export const DEFINITION = {
 				],
 			},
 		],
+		type: '{http://www.iec.ch/61850/2016/NSD}tServiceCDCs',
 	},
 	ServiceConstructedAttribute: {
 		tag: 'ServiceConstructedAttribute',
@@ -2344,6 +2382,7 @@ export const DEFINITION = {
 				],
 			},
 		],
+		type: '{http://www.iec.ch/61850/2016/NSD}tServiceConstructedAttribute',
 	},
 	ServiceConstructedAttributes: {
 		tag: 'ServiceConstructedAttributes',
@@ -2390,6 +2429,7 @@ export const DEFINITION = {
 				],
 			},
 		],
+		type: '{http://www.iec.ch/61850/2016/NSD}tServiceConstructedAttributes',
 	},
 	ServiceDataAttribute: {
 		tag: 'ServiceDataAttribute',
@@ -2505,6 +2545,7 @@ export const DEFINITION = {
 			sequence: [],
 			details: {},
 		},
+		type: '{http://www.iec.ch/61850/2016/NSD}tServiceDataAttribute',
 	},
 	ServiceNS: {
 		tag: 'ServiceNS',
@@ -2630,6 +2671,7 @@ export const DEFINITION = {
 				},
 			],
 		},
+		type: '{http://www.iec.ch/61850/2016/NSD}tServiceNS',
 	},
 	ServiceNsUsage: {
 		tag: 'ServiceNsUsage',
@@ -2690,6 +2732,7 @@ export const DEFINITION = {
 			maxOccurs: 1,
 			particles: [{ kind: 'element', name: 'AppliesTo', minOccurs: 1 }],
 		},
+		type: '{http://www.iec.ch/61850/2016/NSD}tServiceNsUsage',
 	},
 	ServiceParameter: {
 		tag: 'ServiceParameter',
@@ -2772,6 +2815,7 @@ export const DEFINITION = {
 			sequence: [],
 			details: {},
 		},
+		type: '{http://www.iec.ch/61850/2016/NSD}tServiceParameter',
 	},
 	ServiceTypeRealization: {
 		tag: 'ServiceTypeRealization',
@@ -2825,6 +2869,7 @@ export const DEFINITION = {
 			maxOccurs: 1,
 			particles: [{ kind: 'element', name: 'SubDataAttribute', minOccurs: 1 }],
 		},
+		type: '{http://www.iec.ch/61850/2016/NSD}tConstructedAttribute',
 		variants: ['{http://www.iec.ch/61850/2016/NSD}tServiceConstructedAttribute'],
 	},
 	ServiceTypeRealizations: {
@@ -2847,6 +2892,7 @@ export const DEFINITION = {
 			maxOccurs: 1,
 			particles: [{ kind: 'element', name: 'ServiceTypeRealization' }],
 		},
+		type: '{http://www.iec.ch/61850/2016/NSD}tServiceTypeRealizations',
 	},
 	SubDataAttribute: {
 		tag: 'SubDataAttribute',
@@ -2975,6 +3021,7 @@ export const DEFINITION = {
 			sequence: [],
 			details: {},
 		},
+		type: '{http://www.iec.ch/61850/2016/NSD}tSubDataAttribute',
 	},
 	SubDataObject: {
 		tag: 'SubDataObject',
@@ -3093,6 +3140,7 @@ export const DEFINITION = {
 			sequence: [],
 			details: {},
 		},
+		type: '{http://www.iec.ch/61850/2016/NSD}tSubDataObject',
 	},
 } as const
 

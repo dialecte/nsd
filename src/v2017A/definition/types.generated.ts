@@ -75,13 +75,28 @@ export type AttributesChanges = {
 	version: string
 }
 
-export type AttributesConstructedAttribute = {
+export type AttributesConstructedAttribute =
+	| AttributesConstructedAttribute_Own
+	| AttributesConstructedAttribute_tServiceConstructedAttribute
+
+export type AttributesConstructedAttribute_Own = {
+	'xsi:type'?: 'tConstructedAttribute'
 	deprecated?: string
 	descID?: string
 	informative?: string
 	name: string
 	titleID: string
-	'xsi:type'?: 'tServiceConstructedAttribute' | (string & {})
+	typeKindParameterized?: undefined
+}
+
+export type AttributesConstructedAttribute_tServiceConstructedAttribute = {
+	'xsi:type': 'tServiceConstructedAttribute'
+	deprecated?: string
+	descID?: string
+	informative?: string
+	name: string
+	titleID: string
+	typeKindParameterized?: string
 }
 
 export type AttributesConstructedAttributes = {}
@@ -400,13 +415,28 @@ export type AttributesServiceParameter = {
 	typeKind?: 'BASIC' | 'ENUMERATED' | 'CONSTRUCTED' | 'undefined' | (string & {})
 }
 
-export type AttributesServiceTypeRealization = {
+export type AttributesServiceTypeRealization =
+	| AttributesServiceTypeRealization_Own
+	| AttributesServiceTypeRealization_tServiceConstructedAttribute
+
+export type AttributesServiceTypeRealization_Own = {
+	'xsi:type'?: 'tConstructedAttribute'
 	deprecated?: string
 	descID?: string
 	informative?: string
 	name: string
 	titleID: string
-	'xsi:type'?: 'tServiceConstructedAttribute' | (string & {})
+	typeKindParameterized?: undefined
+}
+
+export type AttributesServiceTypeRealization_tServiceConstructedAttribute = {
+	'xsi:type': 'tServiceConstructedAttribute'
+	deprecated?: string
+	descID?: string
+	informative?: string
+	name: string
+	titleID: string
+	typeKindParameterized?: string
 }
 
 export type AttributesServiceTypeRealizations = {}
@@ -613,7 +643,8 @@ export type AttributesByParent = {
 
 export type RequiredAttributeNames<T extends AvailableElement> =
 	(typeof REQUIRED_ATTRIBUTES)[T][number]
+/** Every attribute name a member of the type offers, but the required ones. */
 export type OptionalAttributeNames<T extends AvailableElement> = Exclude<
-	keyof AttributesOf<T>,
+	AttributesOf<T> extends infer Member ? (Member extends unknown ? keyof Member : never) : never,
 	RequiredAttributeNames<T>
 >
