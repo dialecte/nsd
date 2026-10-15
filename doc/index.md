@@ -23,5 +23,5 @@ features:
     details: Read with doc.query, write inside doc.transaction(). Changes are staged and committed atomically — no partial writes.
   - icon: 🧩
     title: IEC 61850 NSD
-    details: First-class support for the IEC 61850 Network Substation Description format. Typed access to NSD and NSDoc files.
+    details: First-class support for the IEC 61850 Namespace Definition (NSD) format. Typed access to NSD and NSDoc files.
 ---
