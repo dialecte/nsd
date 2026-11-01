@@ -1,33 +1,26 @@
 import { assertValidNsdTestCases, assertValidNsdXml } from './assert-valid-xml'
 
-import {
-	CUSTOM_RECORD_ID_ATTRIBUTE,
-	CUSTOM_RECORD_ID_ATTRIBUTE_NAME,
-	XMLNS_XSI_NAMESPACE,
-} from '@dialecte/core/helpers'
+import { CUSTOM_RECORD_ID_ATTRIBUTE, CUSTOM_RECORD_ID_ATTRIBUTE_NAME } from '@dialecte/core/helpers'
 import {
 	createTestProject,
 	createTestRecordFactory,
 	createXmlAssertions,
 	createTestRunner,
-	XMLNS_DEV_NAMESPACE,
 } from '@dialecte/core/test'
 
 import { NSD_DIALECTE_CONFIG } from '@/v2017A/config'
 import { NSD_EXTENSION_MODULES } from '@/v2017A/extensions'
 
+import type { NsdTest } from './hydrated-test.types'
 import type { Config } from '@/v2017A/config/dialecte.config'
 
-type NsdModules = typeof NSD_EXTENSION_MODULES
-
-export const XMLNS_NSD_NAMESPACE = `xmlns="${NSD_DIALECTE_CONFIG.namespaces.default.uri}"`
-export const ALL_XMLNS_NAMESPACES = `${XMLNS_NSD_NAMESPACE} ${XMLNS_DEV_NAMESPACE} ${XMLNS_XSI_NAMESPACE}`
+export { ALL_XMLNS_NAMESPACES, XMLNS_NSD_NAMESPACE } from './nsd-xmlns.constants'
 export { CUSTOM_RECORD_ID_ATTRIBUTE, CUSTOM_RECORD_ID_ATTRIBUTE_NAME }
 export { assertValidNsdXml } from './assert-valid-xml'
 
 const NSD_EXTENSIONS = { base: NSD_EXTENSION_MODULES }
 
-const rawRunNsdTestCases = createTestRunner<Config, NsdModules>({
+const rawRunNsdTestCases = createTestRunner<Config, NsdTest.Modules>({
 	dialecteConfig: NSD_DIALECTE_CONFIG,
 	extensions: NSD_EXTENSIONS,
 })
@@ -52,10 +45,10 @@ export const runNsdTestCases: typeof rawRunNsdTestCases = {
 export async function createNsdTestProject(params: { sourceXml: string; targetXml?: string }) {
 	const { sourceXml, targetXml } = params
 	// a fixture may leave out required attributes; its structure must still be the schema's
-	assertValidNsdXml(sourceXml, 'sourceXml', { requireComplete: false })
-	if (targetXml) assertValidNsdXml(targetXml, 'targetXml', { requireComplete: false })
+	assertValidNsdXml({ xml: sourceXml, label: 'sourceXml', requireComplete: false })
+	if (targetXml) assertValidNsdXml({ xml: targetXml, label: 'targetXml', requireComplete: false })
 
-	return createTestProject<Config, NsdModules>({
+	return createTestProject<Config, NsdTest.Modules>({
 		sourceXml,
 		targetXml,
 		dialecteConfig: NSD_DIALECTE_CONFIG,

@@ -25,7 +25,7 @@ All helpers are wired to the NSD config internally — no config argument needed
 
 ## runNsdTestCases
 
-Table-driven async runner backed by a real in-memory database. Pre-bound to the NSD dialecte config.
+Table-driven async runner backed by a real project, on the store the runner chose (see [Test tiers of this package](#test-tiers-of-this-package)). Pre-bound to the NSD dialecte config.
 
 Two methods enforce the right contract at call-site.
 
@@ -126,7 +126,9 @@ Use `runNsdTestCases.withoutExport` when no export is needed — `act` returns `
 
 ## createNsdTestProject
 
-Lower-level helper for tests that need manual control over intermediate assertions, multi-step verification, or transactions outside `runNsdTestCases`. Spins up a real in-memory `Project` with the source (and optionally target) file imported, and returns pre-opened documents.
+Lower-level helper for tests that need manual control over intermediate assertions, multi-step verification, or transactions outside `runNsdTestCases`. Spins up a real `Project`, on the store the runner chose, with the source (and optionally target) file imported, and returns pre-opened documents.
+
+Call it inside a running test (its body or a `beforeEach`). The test owns the project until it finishes; then the project is destroyed, so you need not destroy it yourself. A project opened outside a running test (in `beforeAll`, to keep it across tests) stays the caller's: destroy it in `afterAll`.
 
 ```ts
 async function createNsdTestProject(params: {
@@ -152,7 +154,7 @@ import {
 	CUSTOM_RECORD_ID_ATTRIBUTE,
 } from '@dialecte/nsd/v2017A/test'
 
-const { project, source } = await createNsdTestProject({
+const { source } = await createNsdTestProject({
 	sourceXml: `
 		<NS ${ALL_XMLNS_NAMESPACES}>
 			<LNClasses>
@@ -162,13 +164,9 @@ const { project, source } = await createNsdTestProject({
 	`,
 })
 
-try {
-	const root = await source.document.query.getRoot()
-	const { LNClass: lnClasses } = await source.document.query.findDescendants(root)
-	expect(lnClasses).toHaveLength(1)
-} finally {
-	await project.destroy()
-}
+const root = await source.document.query.getRoot()
+const { LNClass: lnClasses } = await source.document.query.findDescendants(root)
+expect(lnClasses).toHaveLength(1)
 ```
 
 Use `runNsdTestCases` when the test fits the standard source → act → assert shape. Use `createNsdTestProject` directly when:
@@ -199,15 +197,19 @@ The same check, for your own fixtures. Throws when the XML is not valid NSD.
 ```ts
 import { assertValidNsdXml } from '@dialecte/nsd/v2017A/test'
 
-assertValidNsdXml(xml)
-assertValidNsdXml(xml, 'targetXml', { requireComplete: false })
+assertValidNsdXml({ xml }) // required attributes checked
+assertValidNsdXml({ xml, label: 'targetXml', requireComplete: false })
 ```
 
-| Parameter                 | Description                                                                 |
-| ------------------------- | --------------------------------------------------------------------------- |
-| `xml`                     | The document to check                                                       |
-| `label`                   | Names the document in the error message. Optional.                          |
-| `options.requireComplete` | Also require every schema-required attribute to be present. Default `true`. |
+It takes one object, `assertValidNsdXml({ xml, label?, requireComplete? })`:
+
+| Property          | Description                                                                 |
+| ----------------- | --------------------------------------------------------------------------- |
+| `xml`             | The document to check, as XML text                                          |
+| `label`           | Names the document in the error message. Optional.                          |
+| `requireComplete` | Also require every schema-required attribute to be present. Default `true`. |
+
+The XML is read with libxml2, the same in node and in a browser. Text that is not well-formed fails as `<label>: malformed XML - <line>:<column> <reason>`.
 
 ---
 
@@ -225,17 +227,21 @@ const record = createNsdTestRecord({
 
 ## XML assertions
 
-`assertExpectedElementQueries` and `assertUnexpectedElementQueries` run XPath assertions against an `XMLDocument`. Both use the NSD namespace map.
+`assertExpectedElementQueries` and `assertUnexpectedElementQueries` run XPath assertions against XML text, `{ xml, queries }`, parsed once per call with libxml2 (the same in node and in a browser). Both use the NSD namespace map.
 
-Use directly when calling `createNsdTestProject` and exporting manually via `project.export(documentId)`.
+Use directly when calling `createNsdTestProject` and exporting yourself: `project.export({ documentId })` answers `{ file, filename }`, and `await file.text()` is the XML.
 
 ```ts
+const { file } = await project.export({ documentId: source.documentId })
+const xml = await file.text()
 assertExpectedElementQueries({
-	xmlDocument,
+	xml,
 	queries: ['//default:LNClasses/default:LNClass[@name="XCBR"]'],
 })
-assertUnexpectedElementQueries({ xmlDocument, queries: ['//default:LNClass[@name="deleted"]'] })
+assertUnexpectedElementQueries({ xml, queries: ['//default:LNClass[@name="deleted"]'] })
 ```
+
+A failure says why in labelled lines: the steps of the query that matched, the step that failed, where the last match sits and what the failing step finds there without its predicates. Text that is not well-formed fails as `queried XML: malformed XML - <line>:<column> <reason>`.
 
 ---
 
@@ -294,21 +300,49 @@ expectedQueries: ['//default:LNClass[@name="XCBR"]']
 
 ---
 
+## Test tiers of this package
+
+The helpers need no browser API: they read XML with libxml2 and documents through the store. This package runs its tests in two tiers (`vitest.config.ts`):
+
+| Command                                | Project       | Runs                                                                                        | When                     |
+| -------------------------------------- | ------------- | ------------------------------------------------------------------------------------------- | ------------------------ |
+| `npx vitest run --project node <path>` | `node`        | every unit test file but the browser-only list, in node, on the in-memory store             | each step                |
+| `npm run test:node`                    | `node`        | the same, whole                                                                             | each step, the fast gate |
+| `npm run test:browser`                 | `browser`     | the browser-only list (`BROWSER_ONLY_TEST_FILES` in `vitest.config.constants.ts`), Chromium | the full gate            |
+| `npm test`                             | both          | `test:node`, then `test:browser`                                                            | the commit hook          |
+| `npm run test:browser:all`             | `browser-all` | every unit test file but the node-only list, in Chromium, on the local store                | before a merge (CI)      |
+
+The `node` project's setup (`src/v2017A/test/in-memory-storage.setup.ts`) calls core's `useTestStorage({ type: 'inMemory' })`: the runner chooses the store, a test never names it. The browser-only list is empty today; a file added to it says why (`{ path, why }`), naming the browser API it needs. A test that passes in one tier and fails in the other is a store or assertion bug to fix, never a file moved to the browser list.
+
+### Running the helpers in node, in your package
+
+`runNsdTestCases` and `createNsdTestProject` open their projects on the store the runner chose. To run your NSD tests in node, give your node test project a setup file with the same line:
+
+```ts
+// in-memory-storage.setup.ts, in setupFiles of your node vitest project
+import { useTestStorage } from '@dialecte/core/test'
+
+useTestStorage({ type: 'inMemory' })
+```
+
+---
+
 ## NsdTest type namespace
 
 All types are bound to the NSD dialecte config via the `NsdTest` namespace:
 
-| Type                        | Description                                                                                          |
-| --------------------------- | ---------------------------------------------------------------------------------------------------- |
-| `NsdTest.BaseTestCase`      | `{ only?: boolean }` - minimal base for non-XML tests (e.g. `runNsdTestCases.generic`)               |
-| `NsdTest.BaseXmlTestCase`   | `BaseTestCase & { sourceXml, targetXml?, expectedQueries?, unexpectedQueries? }` - XML tests         |
-| `NsdTest.TestCases<T>`      | `Record<string, T>` - key is the test description. Defaults to `BaseXmlTestCase`                     |
-| `NsdTest.TestDocument`      | `{ documentId: string, document: Nsd.Document }` - pre-opened document inside the test project       |
-| `NsdTest.TestProjectResult` | `{ project, source: TestDocument, target?: TestDocument }` - returned by `createNsdTestProject`      |
-| `NsdTest.TestRecord`        | Typed in-memory record shape — returned by `createNsdTestRecord`                                     |
-| `NsdTest.ActParams<T>`      | `{ project, source, target?, testCase }` - passed to `act`                                           |
-| `NsdTest.ActResult`         | `{ assertOn?: 'source' \| 'target', withDatabaseIds?: boolean }` - returned by `act` in `withExport` |
-| `NsdTest.TestRunner`        | Runner type bound to NSD config                                                                      |
+| Type                        | Description                                                                                                                     |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `NsdTest.BaseTestCase`      | `{ only?: boolean }` - minimal base for non-XML tests (e.g. `runNsdTestCases.generic`)                                          |
+| `NsdTest.BaseXmlTestCase`   | `BaseTestCase & { sourceXml, targetXml?, expectedQueries?, unexpectedQueries? }` - XML tests                                    |
+| `NsdTest.TestCases<T>`      | `Record<string, T>` - key is the test description. Defaults to `BaseXmlTestCase`                                                |
+| `NsdTest.TestDocument`      | `{ documentId: string, document: Nsd.Document }` - pre-opened document inside the test project                                  |
+| `NsdTest.TestProjectResult` | `{ project, source: TestDocument, target?: TestDocument }` - returned by `createNsdTestProject`                                 |
+| `NsdTest.TestRecord`        | Typed in-memory record shape — returned by `createNsdTestRecord`                                                                |
+| `NsdTest.ActParams<T>`      | `{ project, source, target?, testCase }` - passed to `act`                                                                      |
+| `NsdTest.ActResult`         | `{ assertOn?: 'source' \| 'target', withDatabaseIds?: boolean }` - returned by `act` in `withExport`                            |
+| `NsdTest.TestRunner`        | Runner type bound to NSD config                                                                                                 |
+| `NsdTest.Modules`           | The extension modules every NSD test project is opened with (none today: `{}`); the second type argument of the core test types |
 
 `TestCases<T>` accepts any type extending `BaseTestCase` - use `BaseTestCase` for non-XML generic tests, `BaseXmlTestCase` for XML round-trip tests:
 

@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **Breaking:** requires `@dialecte/core` 0.8.0.
+- **Breaking: the `Project` that `createNsdProject` returns exports with one object, as `@dialecte/core` 0.8.0 does.** `project.export({ documentId, indent?, withDatabaseIds?, xmlDocument?, download? })` returns `{ file, filename }`, `file` the XML as a `Blob` (`await file.text()` reads it), and with `xmlDocument: true` also `xmlDocument`, the DOM parsed in the page (in a browser only); it was `project.export(documentId, { withDatabaseIds, withDownload })` returning `{ xmlDocument, filename }`. `project.exportBlob({ blobId, download? })` takes one object too and still returns `{ entry, data, filename }`; it was `project.exportBlob(blobId, { withDownload })`.
+- **Breaking: the `Project` that `createNsdProject` returns imports as `@dialecte/core` 0.7.0 does** (this package goes from core 0.6.1 to 0.8.0). `project.import(files)` returns one entry per file (`{ status: 'imported', fileName, documentId, recordCount, diagnostics }` or `{ status: 'failed', fileName, error }`) and no longer rejects for one file; `project.importFile(file)` imports one file and returns it, or throws what failed (`PARSE_ERROR` for a malformed file); `project.close()` returns a promise. A caller that read `(await project.import([file]))[0].documentId` calls `project.importFile(file)`.
+- **Breaking (`@dialecte/nsd/v2017A/test`): `assertValidNsdXml` takes one object**, `assertValidNsdXml({ xml, label?, requireComplete? })` (was `assertValidNsdXml(xml, label?, { requireComplete? })`). Text that is not well-formed fails as `<label>: malformed XML - <line>:<column> <reason>`.
+- **Breaking (`@dialecte/nsd/v2017A/test`): `assertExpectedElementQueries` and `assertUnexpectedElementQueries` take XML text only**, `{ xml, queries }` (was `{ xmlDocument, queries }`). A caller holding a project exports the document with `project.export({ documentId })` and passes `await file.text()`. All the XML assertions read XML with libxml2, the same in node and in a browser.
+- **Breaking (`@dialecte/nsd/v2017A/test`): a project `createNsdTestProject` opens inside a running test is destroyed when that test ends.** Open it in `beforeAll` to keep it across tests; it is then the caller's to destroy.
+- **The test helpers need no browser; this package's tests run in node by default.** `createNsdTestProject` and `runNsdTestCases` open their projects on the store the test runner chose. A consumer runs its NSD tests in node by giving its node test project a setup file that calls core's `useTestStorage({ type: 'inMemory' })`. Here, `npm test` runs every unit test in node on the in-memory store (the `node` project), then the browser-only list in Chromium (`browser`, empty today); `npm run test:browser:all` runs the whole suite in Chromium (`browser-all`), as a pull request does. The tiers are on the test helpers page (Test tiers of this package).
+
 ## [0.4.0] - 2026-10-14
 
 ### Changed

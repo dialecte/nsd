@@ -26,13 +26,13 @@ const project = await createNsdProject({ storage: { type: 'local' } }).open('my-
 
 ## Step 2 - Import an NSD file
 
-`project.import` parses one or more NSD files and stores each one as a document in the project.
+`project.importFile` parses one NSD file and stores it as a document in the project; it returns the imported document, or throws what failed (`PARSE_ERROR` for a malformed file). To import several files at once, `project.import(files)` answers one entry per file, `imported` or `failed`.
 
 Supports `.nsd` and `.nsdoc`.
 
 ```ts
 // Browser File object - e.g. from an <input type="file">
-const [{ documentId }] = await project.import([nsdFile])
+const { documentId } = await project.importFile(nsdFile)
 ```
 
 ## Step 3 - Open a document
@@ -71,8 +71,8 @@ await doc.transaction(async (tx) => {
 
 ## Step 6 - Export
 
-Export back to NSD XML:
+`project.export` writes a document back to an NSD XML file. Pass `download: true` to save it as well (the save dialog where the browser has one, a download otherwise).
 
 ```ts
-const [blob] = await project.export([documentId])
+const { file, filename } = await project.export({ documentId })
 ```
