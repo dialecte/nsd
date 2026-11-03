@@ -40,12 +40,13 @@ Two methods enforce the right contract at call-site.
 Use when `act` asserts directly on query results via `expect`. No XML export needed.
 
 ```ts
-import { describe, expect } from 'vitest'
 import {
 	runNsdTestCases,
 	ALL_XMLNS_NAMESPACES,
 	CUSTOM_RECORD_ID_ATTRIBUTE,
 } from '@dialecte/nsd/v2017A/test'
+import { describe, expect } from 'vitest'
+
 import type { NsdTest } from '@dialecte/nsd/v2017A/test'
 
 type TestCase = NsdTest.BaseXmlTestCase & {
@@ -86,8 +87,9 @@ describe('getLNClasses', () => {
 Use when `act` performs transactions and assertions must run on the exported XML via XPath. `act` returns an optional `ActResult` to choose which document to assert on (defaults to `source`) and toggle `withDatabaseIds`.
 
 ```ts
-import { describe } from 'vitest'
 import { runNsdTestCases, ALL_XMLNS_NAMESPACES } from '@dialecte/nsd/v2017A/test'
+import { describe } from 'vitest'
+
 import type { NsdTest } from '@dialecte/nsd/v2017A/test'
 
 type TestCase = NsdTest.BaseXmlTestCase & {
