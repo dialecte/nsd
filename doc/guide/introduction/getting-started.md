@@ -16,7 +16,7 @@ $ pnpm add @dialecte/nsd
 
 ## Step 1 - Create a project
 
-`createNsdProject` returns a [`Project`](https://dialecte.github.io/core/api/project) pre-configured with the NSD config and extensions. Call `.open(name)` to initialize storage and hydrate state.
+`createNsdProject` returns a [`Project`](https://dialecte.github.io/core/api/project) pre-configured with the NSD and NSDoc configs and the extensions. Call `.open(name)` to initialize storage and hydrate state.
 
 ```ts
 import { createNsdProject } from '@dialecte/nsd/v2017A'
@@ -28,11 +28,12 @@ const project = await createNsdProject({ storage: { type: 'local' } }).open('my-
 
 `project.importFile` parses one NSD file and stores it as a document in the project; it returns the imported document, or throws what failed (`PARSE_ERROR` for a malformed file). To import several files at once, `project.import(files)` answers one entry per file, `imported` or `failed`.
 
-Supports `.nsd` and `.nsdoc`.
+Supports `.nsd` and `.nsdoc`. A file is imported under the `nsd` config unless the call names another: an NSDoc file takes `{ configKey: 'nsdoc' }`.
 
 ```ts
 // Browser File object - e.g. from an <input type="file">
 const { documentId } = await project.importFile(nsdFile)
+const { documentId: docId } = await project.importFile(nsdocFile, { configKey: 'nsdoc' })
 ```
 
 ## Step 3 - Open a document

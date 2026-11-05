@@ -15,4 +15,6 @@ export namespace NsdTest {
 	export type ActParams<T extends CoreTest.BaseXmlTestCase> = CoreTest.ActParams<Config, T, Modules>
 	export type ActResult = CoreTest.ActResult
 	export type TestRunner = CoreTest.TestRunner<Config, Modules>
+	/** Every test helper of the NSD dialecte, as core derives them from its declaration. */
+	export type Helpers = CoreTest.TestHelpers<Config, Modules>
 }

@@ -21,11 +21,11 @@ import {
 } from '@dialecte/nsd/v2017A/test'
 ```
 
-All helpers are wired to the NSD config internally — no config argument needed. Every fixture is checked against the schema before it runs — see [Fixture validation](#fixture-validation).
+All helpers are built from `NSD_DIALECTE`, the package's declaration, with core's `createTestHelpers`: every test project carries both configs, `nsd` (the default) and `nsdoc`, as `createNsdProject` does — no config argument needed. Every fixture is checked against the schema before it runs — see [Fixture validation](#fixture-validation).
 
 ## runNsdTestCases
 
-Table-driven async runner backed by a real project, on the store the runner chose (see [Test tiers of this package](#test-tiers-of-this-package)). Pre-bound to the NSD dialecte config.
+Table-driven async runner backed by a real project, on the store the runner chose (see [Test tiers of this package](#test-tiers-of-this-package)). Bound to the NSD dialecte: a call takes `configKey` (`nsd` by default, see [createNsdTestProject](#creatensdtestproject)).
 
 Two methods enforce the right contract at call-site.
 
@@ -136,7 +136,19 @@ Call it inside a running test (its body or a `beforeEach`). The test owns the pr
 async function createNsdTestProject(params: {
 	sourceXml: string
 	targetXml?: string
+	configKey?: string // 'nsd' (the default) or 'nsdoc'
+	storage?: StorageParam // the store, when not the one the runner chose
+	dev?: { perf?: boolean }
 }): Promise<NsdTest.TestProjectResult>
+```
+
+`configKey` names the config the fixtures are imported under and checked against: `nsd` by default, `nsdoc` for an NSDoc fixture (root `NSDoc`). `runNsdTestCases.withExport` and `withoutExport` take the same `configKey`.
+
+```ts
+const { project, source } = await createNsdTestProject({
+	sourceXml: `<NSDoc ${ALL_XMLNS_NAMESPACES} id="MyDoc" lang="en" version="2017"><Doc id="d1">Text</Doc></NSDoc>`,
+	configKey: 'nsdoc',
+})
 ```
 
 The returned `TestProjectResult` shape:
@@ -314,7 +326,7 @@ The helpers need no browser API: they read XML with libxml2 and documents throug
 | `npm test`                             | both          | `test:node`, then `test:browser`                                                            | the commit hook          |
 | `npm run test:browser:all`             | `browser-all` | every unit test file but the node-only list, in Chromium, on the local store                | before a merge (CI)      |
 
-The `node` project's setup (`src/v2017A/test/in-memory-storage.setup.ts`) calls core's `useTestStorage({ type: 'inMemory' })`: the runner chooses the store, a test never names it. The browser-only list is empty today; a file added to it says why (`{ path, why }`), naming the browser API it needs. A test that passes in one tier and fails in the other is a store or assertion bug to fix, never a file moved to the browser list.
+The `node` project's setup (`src/v2017A/test/in-memory-storage.setup.ts`) calls core's `useTestStorage({ type: 'inMemory' })`: the runner chooses the store, a test never names it. A file of the browser-only list says why (`{ path, why }`), naming the browser API it needs. A test that passes in one tier and fails in the other is a store or assertion bug to fix, never a file moved to the browser list.
 
 ### Running the helpers in node, in your package
 
@@ -344,6 +356,7 @@ All types are bound to the NSD dialecte config via the `NsdTest` namespace:
 | `NsdTest.ActParams<T>`      | `{ project, source, target?, testCase }` - passed to `act`                                                                      |
 | `NsdTest.ActResult`         | `{ assertOn?: 'source' \| 'target', withDatabaseIds?: boolean }` - returned by `act` in `withExport`                            |
 | `NsdTest.TestRunner`        | Runner type bound to NSD config                                                                                                 |
+| `NsdTest.Helpers`           | Every test helper of the NSD dialecte, as core derives them from `NSD_DIALECTE`                                                 |
 | `NsdTest.Modules`           | The extension modules every NSD test project is opened with (none today: `{}`); the second type argument of the core test types |
 
 `TestCases<T>` accepts any type extending `BaseTestCase` - use `BaseTestCase` for non-XML generic tests, `BaseXmlTestCase` for XML round-trip tests:
