@@ -1,65 +1,64 @@
-import { assertValidNsdTestCases, assertValidNsdXml } from './assert-valid-xml'
-
 import { CUSTOM_RECORD_ID_ATTRIBUTE, CUSTOM_RECORD_ID_ATTRIBUTE_NAME } from '@dialecte/core/helpers'
-import {
-	createTestProject,
-	createTestRecordFactory,
-	createXmlAssertions,
-	createTestRunner,
-} from '@dialecte/core/test'
+import { createTestHelpers } from '@dialecte/core/test'
 
-import { NSD_DIALECTE_CONFIG } from '@/v2017A/config'
-import { NSD_EXTENSION_MODULES } from '@/v2017A/extensions'
+import { NSD_DIALECTE } from '@/v2017A/declaration.constants'
 
 import type { NsdTest } from './hydrated-test.types'
-import type { Config } from '@/v2017A/config/dialecte.config'
 
 export { ALL_XMLNS_NAMESPACES, XMLNS_NSD_NAMESPACE } from './nsd-xmlns.constants'
 export { CUSTOM_RECORD_ID_ATTRIBUTE, CUSTOM_RECORD_ID_ATTRIBUTE_NAME }
-export { assertValidNsdXml } from './assert-valid-xml'
 
-const NSD_EXTENSIONS = { base: NSD_EXTENSION_MODULES }
-
-const rawRunNsdTestCases = createTestRunner<Config, NsdTest.Modules>({
-	dialecteConfig: NSD_DIALECTE_CONFIG,
-	extensions: NSD_EXTENSIONS,
+const nsdTestHelpers: NsdTest.Helpers = createTestHelpers({
+	dialecte: NSD_DIALECTE,
+	schemaName: 'Nsd',
 })
 
 /**
- * `createTestRunner`, wrapped so the XML of every case is checked against the schema before the
- * suite runs: a mistyped tag, a wrong namespace or an unknown attribute fails loudly, every invalid
- * case reported at once, instead of the suite quietly testing something else.
+ * Run table-driven cases on a real NSD project. A call takes a `configKey` (`nsd` by default, `nsdoc` for NSDoc
+ * fixtures), and every case's XML is checked against the schema of that config before the suite runs: a mistyped tag, a
+ * wrong namespace or an unknown attribute fails loudly, every invalid case reported at once.
+ *
+ * @intent test an NSD extension or hook with table-driven cases, assert on exported NSD XML, test NSDoc documents
  */
-export const runNsdTestCases: typeof rawRunNsdTestCases = {
-	...rawRunNsdTestCases,
-	withExport(params) {
-		assertValidNsdTestCases({ testCases: params.testCases })
-		rawRunNsdTestCases.withExport(params)
-	},
-	withoutExport(params) {
-		assertValidNsdTestCases({ testCases: params.testCases })
-		rawRunNsdTestCases.withoutExport(params)
-	},
-}
+export const runNsdTestCases: NsdTest.Helpers['runTestCases'] = nsdTestHelpers.runTestCases
 
-export async function createNsdTestProject(params: { sourceXml: string; targetXml?: string }) {
-	const { sourceXml, targetXml } = params
-	// a fixture may leave out required attributes; its structure must still be the schema's
-	assertValidNsdXml({ xml: sourceXml, label: 'sourceXml', requireComplete: false })
-	if (targetXml) assertValidNsdXml({ xml: targetXml, label: 'targetXml', requireComplete: false })
+/**
+ * Open a real NSD project with the source (and target) fixture imported and opened. `configKey` names the config they
+ * are imported under and checked against (`nsd` by default, `nsdoc` for an NSDoc fixture); required attributes may be
+ * left out.
+ *
+ * @intent open an NSD test project, test several steps on an NSD document, import an NSDoc fixture in a test
+ */
+export const createNsdTestProject: NsdTest.Helpers['createTestProject'] =
+	nsdTestHelpers.createTestProject
 
-	return createTestProject<Config, NsdTest.Modules>({
-		sourceXml,
-		targetXml,
-		dialecteConfig: NSD_DIALECTE_CONFIG,
-		extensions: NSD_EXTENSIONS,
-	})
-}
+/**
+ * Make a typed in-memory NSD record, without a store, bound to the default config.
+ *
+ * @intent make an NSD record in a unit test, test a pure function on NSD records
+ */
+export const createNsdTestRecord: NsdTest.Helpers['createTestRecord'] =
+	nsdTestHelpers.createTestRecord
 
-export const createNsdTestRecord: ReturnType<typeof createTestRecordFactory<Config>> =
-	createTestRecordFactory<Config>(NSD_DIALECTE_CONFIG)
-export const { assertExpectedElementQueries, assertUnexpectedElementQueries } = createXmlAssertions(
-	{
-		namespaces: NSD_DIALECTE_CONFIG.namespaces,
-	},
-)
+/**
+ * Assert that XPath queries each find an element in XML text, with the NSD namespaces.
+ *
+ * @intent assert elements are present in NSD XML, check exported NSD XML with XPath
+ */
+export const assertExpectedElementQueries: NsdTest.Helpers['assertExpectedElementQueries'] =
+	nsdTestHelpers.assertExpectedElementQueries
+
+/**
+ * Assert that XPath queries each find nothing in XML text, with the NSD namespaces.
+ *
+ * @intent assert elements are absent from NSD XML, check exported NSD XML with XPath
+ */
+export const assertUnexpectedElementQueries: NsdTest.Helpers['assertUnexpectedElementQueries'] =
+	nsdTestHelpers.assertUnexpectedElementQueries
+
+/**
+ * Check XML against the NSD schema: namespaces, allowed children and known attributes. Throws what is invalid.
+ *
+ * @intent validate an NSD fixture against the schema, check NSD XML structure in a test
+ */
+export const assertValidNsdXml: NsdTest.Helpers['assertValidXml'] = nsdTestHelpers.assertValidXml

@@ -32,6 +32,8 @@ Two configs are provided:
 - `NSD_DIALECTE_CONFIG` — for `.nsd` files (root element: `NS`)
 - `NSDOC_DIALECTE_CONFIG` — for `.nsdoc` files (root element: `NSDoc`)
 
+`NSD_DIALECTE`, exported from `@dialecte/nsd/v2017A`, declares the dialecte once with both: `nsd` is the default config, an NSDoc file is imported with `{ configKey: 'nsdoc' }`. `createNsdProject` and the test helpers are built from it.
+
 ```ts
 import { createNsdProject } from '@dialecte/nsd/v2017A'
 ```

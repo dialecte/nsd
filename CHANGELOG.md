@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## UNRELEASED
+
+### Added
+
+- **`NSD_DIALECTE`**, the package's declaration, exported from `@dialecte/nsd/v2017A`: its `id` (`nsd/v2017A`), its `version`, both configs (`nsd`, and `nsdoc` for NSDoc files), `nsd` the default, and its extensions. `createNsdProject` and the test helpers are built from it; `createNsdProject` is called and imported as before.
+- (`@dialecte/nsd/v2017A/test`) `createNsdTestProject` and `runNsdTestCases` take `configKey`: `nsdoc` imports an NSDoc fixture under its own config and checks it against that config's schema; `nsd` stays the default. `NsdTest.Helpers` is the type of every test helper.
+
+### Changed
+
+- (`@dialecte/nsd/v2017A/test`) A test document under the default config is stored under the key `nsd`, the key `createNsdProject` uses (it was `default`), and `configKey: 'default'` is refused `UNKNOWN_CONFIG_KEY`. A test that passed it leaves the key out.
+
 ## [0.5.2] - 2026-11-05
 
 ### Changed
