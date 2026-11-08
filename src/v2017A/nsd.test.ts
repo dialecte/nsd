@@ -13,6 +13,35 @@ const NSDOC_FILE = new File(
 	'fixture.nsdoc',
 )
 
+/**
+ * How many documents an NSD project of that name holds on in-memory storage, read by opening it: the realm keeps a closed
+ * project's in-memory state, by dialecte and name, until it is destroyed.
+ */
+async function countInMemoryDocuments(name: string): Promise<number> {
+	const project = await createNsdProject({ storage: { type: 'inMemory' } }).open(name)
+	try {
+		return (await project.getDocuments()).length
+	} finally {
+		await project.close()
+	}
+}
+
+/**
+ * The documents of an in-memory NSD project of a fresh name, before and after `createNsdProject.destroyProject` named it:
+ * the project holds one document, closed before the destroy.
+ */
+async function readDestroyProject(): Promise<{ before: number; after: number }> {
+	const name = `nsd-factory-destroy-${crypto.randomUUID()}`
+	const project = await createNsdProject({ storage: { type: 'inMemory' } }).open(name)
+	await project.importFile(NS_FILE)
+	await project.close()
+	const before = await countInMemoryDocuments(name)
+	await createNsdProject.destroyProject({ name, storage: { type: 'inMemory' } })
+	const after = await countInMemoryDocuments(name)
+	await createNsdProject.destroyProject({ name, storage: { type: 'inMemory' } })
+	return { before, after }
+}
+
 describe('createNsdProject', () => {
 	it('returns a project instance', () => {
 		const project = createNsdProject()
@@ -21,6 +50,14 @@ describe('createNsdProject', () => {
 
 	it("a project -> carries the declaration's id, the dialecte its store names it under", () => {
 		expect(createNsdProject().dialecteId).toBe('nsd/v2017A')
+	})
+
+	it('the factory -> carries the NSD declaration it makes its projects from', () => {
+		expect(createNsdProject.dialecte).toBe(versionEntry.NSD_DIALECTE)
+	})
+
+	it('destroyProject -> deletes the NSD project of that name on the storage named, without opening it', async () => {
+		await expect(readDestroyProject()).resolves.toEqual({ before: 1, after: 0 })
 	})
 
 	it('the main entry -> still exports the factory, beside the declaration', () => {

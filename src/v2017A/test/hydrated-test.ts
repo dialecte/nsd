@@ -14,9 +14,10 @@ const nsdTestHelpers: NsdTest.Helpers = createTestHelpers({
 })
 
 /**
- * Run table-driven cases on a real NSD project. A call takes a `configKey` (`nsd` by default, `nsdoc` for NSDoc
- * fixtures), and every case's XML is checked against the schema of that config before the suite runs: a mistyped tag, a
- * wrong namespace or an unknown attribute fails loudly, every invalid case reported at once.
+ * Run table-driven NSD cases. `withExport` and `withoutExport` import each case into a real NSD project under the call's
+ * `configKey` (`nsd` by default, `nsdoc` for NSDoc fixtures), and check every case's XML before the suite runs, against
+ * the call's `dialecteConfig` when it passes one, else the config under that key: a mistyped tag, a wrong namespace or an
+ * unknown attribute fails loudly, every invalid case reported at once. `generic` runs plain cases: no project, no XML.
  *
  * @intent test an NSD extension or hook with table-driven cases, assert on exported NSD XML, test NSDoc documents
  */
@@ -57,7 +58,8 @@ export const assertUnexpectedElementQueries: NsdTest.Helpers['assertUnexpectedEl
 	nsdTestHelpers.assertUnexpectedElementQueries
 
 /**
- * Check XML against the NSD schema: namespaces, allowed children and known attributes. Throws what is invalid.
+ * Check XML against the NSD schema: namespaces, allowed children, known attributes and, unless `requireComplete: false`,
+ * required attributes. Throws what is invalid.
  *
  * @intent validate an NSD fixture against the schema, check NSD XML structure in a test
  */

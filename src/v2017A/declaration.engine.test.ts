@@ -1,11 +1,12 @@
-// SQLite storage, as an app opts into it
-import '@dialecte/core/sqlite'
 import { NSD_DIALECTE_CONFIG } from './config'
+// A test-only engine worker serving the NSD declaration, as an app's one worker file serves its dialectes
+import engineUrl from './test/fixtures/nsd-engine.worker.ts?worker&url'
 
-import { createProjectFactory } from '@dialecte/core'
+// SQLite storage, as an app opts into it: the import registers the kind
+import { registerSqliteEngine } from '@dialecte/core/sqlite'
 import { describe, expect, it, onTestFinished, vi } from 'vitest'
 
-import { NSD_DIALECTE } from '@/v2017A'
+import { createNsdProject, NSD_DIALECTE } from '@/v2017A'
 
 import type { Nsd } from './config'
 
@@ -14,13 +15,8 @@ const ENGINE_CASE_TIMEOUT_MS = 60_000
 
 vi.setConfig({ testTimeout: ENGINE_CASE_TIMEOUT_MS })
 
-/** A test-only engine worker serving the NSD declaration, as the dev server serves it. */
-const ENGINE_URL = new URL('./test/fixtures/nsd-engine.worker.ts', import.meta.url).href
-/** Projects of the NSD declaration, run by that engine worker. */
-const createDeclaredNsdProject = createProjectFactory({
-	dialecte: NSD_DIALECTE,
-	engineUrl: ENGINE_URL,
-})
+// the page says once where its engine is, before the first project
+registerSqliteEngine({ url: engineUrl, dialectes: [NSD_DIALECTE] })
 
 const NSD_NAMESPACE = `xmlns="${NSD_DIALECTE_CONFIG.namespaces.default.uri}"`
 
@@ -42,17 +38,17 @@ async function importAndReadBack(params: {
 }): Promise<ReadBack> {
 	const { file, configKey, childTagName } = params
 	const name = `nsd-sqlite-${crypto.randomUUID()}`
-	const first = await createDeclaredNsdProject({ storage: { type: 'sqlite' } }).open(name)
+	const first = await createNsdProject({ storage: { type: 'sqlite' } }).open(name)
 	// the project the case holds open; none between the close and the reopen
 	const held: { project: Nsd.Project | undefined } = { project: first }
 	onTestFinished(function destroyProject() {
 		if (held.project) return held.project.destroy()
-		return createDeclaredNsdProject.destroyProject({ name })
+		return createNsdProject.destroyProject({ name, storage: { type: 'sqlite' } })
 	})
 	const { documentId } = await first.importFile(file, configKey ? { configKey } : undefined)
 	await first.close()
 	held.project = undefined
-	const again = await createDeclaredNsdProject({ storage: { type: 'sqlite' } }).open(name)
+	const again = await createNsdProject({ storage: { type: 'sqlite' } }).open(name)
 	held.project = again
 	const document = again.openDocument(documentId)
 	const root = await document.query.getRoot()

@@ -5,15 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## UNRELEASED
+## [0.6.0] - 2026-11-08
 
 ### Added
 
-- **`NSD_DIALECTE`**, the package's declaration, exported from `@dialecte/nsd/v2017A`: its `id` (`nsd/v2017A`), its `version`, both configs (`nsd`, and `nsdoc` for NSDoc files), `nsd` the default, and its extensions. `createNsdProject` and the test helpers are built from it; `createNsdProject` is called and imported as before.
+- **`NSD_DIALECTE`**, the package's declaration, exported from `@dialecte/nsd/v2017A`: its `id` (`nsd/v2017A`), its `version`, both configs (`nsd`, and `nsdoc` for NSDoc files), `nsd` the default, and its extensions. `createNsdProject` and the test helpers are built from it.
+- **An NSD project can open on SQLite storage.** The app serves `NSD_DIALECTE` from its one engine worker file (`serveSqliteEngine({ dialectes: [NSD_DIALECTE] })`, with its other dialectes), tells the page once where that file is (`registerSqliteEngine({ url, dialectes: [NSD_DIALECTE] })`, `url` a `?worker&url` import of it; both from `@dialecte/core/sqlite`), then opens `createNsdProject({ storage: { type: 'sqlite' } })`. This package ships no worker.
 - (`@dialecte/nsd/v2017A/test`) `createNsdTestProject` and `runNsdTestCases` take `configKey`: `nsdoc` imports an NSDoc fixture under its own config and checks it against that config's schema; `nsd` stays the default. `NsdTest.Helpers` is the type of every test helper.
 
 ### Changed
 
+- **Breaking: requires `@dialecte/core` 0.9.0** (pinned exactly, was 0.8.1). Every copy of `@dialecte/core` in a page must be 0.9.0: move the app and its other dialecte packages with this one, and keep one `@dialecte/core` in the lockfile. Core's 0.9.0 notes list what changes for an app (the SQLite engine the app assembles, storage kinds, `destroyProject({ name, storage })`, the renamed store errors); for a local or in-memory project, core 0.9.0 itself changes nothing.
+- **`createNsdProject` is core's project factory of `NSD_DIALECTE`** (`createProjectFactory({ dialecte: NSD_DIALECTE })`): called and imported as before (`createNsdProject({ storage?, extensions? }).open(name)`, storage `local` by default), it also carries `createNsdProject.dialecte` and `createNsdProject.destroyProject({ name, storage })`, which deletes a project without opening it.
+- **A project of `createNsdProject` names its dialecte, `nsd/v2017A`** (`project.dialecteId`, `undefined` before), and its in-memory state is keyed by dialecte and name: an NSD project and a project of another dialecte, or a plain `new Project`, of the same name in one page no longer share their in-memory state. A local project stays keyed by its name.
 - (`@dialecte/nsd/v2017A/test`) A test document under the default config is stored under the key `nsd`, the key `createNsdProject` uses (it was `default`), and `configKey: 'default'` is refused `UNKNOWN_CONFIG_KEY`. A test that passed it leaves the key out.
 
 ## [0.5.2] - 2026-11-05
