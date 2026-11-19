@@ -9,5 +9,7 @@ import { createProjectFactory } from '@dialecte/core'
  * (`createNsdProject.destroyProject({ name, storage })`).
  *
  * Marked pure: a consumer importing only the declaration leaves it out of its bundle.
+ *
+ * @intent open an NSD project, import and edit NSD files, register custom extensions on an NSD project, delete an NSD project without opening it
  */
 export const createNsdProject = /* @__PURE__ */ createProjectFactory({ dialecte: NSD_DIALECTE })
