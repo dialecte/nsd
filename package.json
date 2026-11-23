@@ -1,6 +1,6 @@
 {
 	"name": "@dialecte/nsd",
-	"version": "0.7.0",
+	"version": "0.8.0",
 	"description": "Dialecte - NSD (Namespace Definition) sdk",
 	"license": "MIT",
 	"repository": {
